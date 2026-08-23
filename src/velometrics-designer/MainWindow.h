@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+#include "ActionManager/ActionManager.h"
+
 class QAction;
 class QMenu;
 class QTreeWidget;
@@ -11,6 +13,10 @@ class QGraphicsScene;
 class QTreeWidget;
 class QLabel;
 class MainToolBar;
+class ElementsDock;
+class PropertiesDock;
+class CanvasWidget;
+class VelometricsMenuBar;
 
 class MainWindow : public QMainWindow
 {
@@ -19,16 +25,17 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = nullptr);
 
-private slots:
+public slots:
     void onAboutTriggered();
-private:
-    void createMenus() const;
-    void createActions();
-    void createToolBar();
-    void createCanvas();
-    void createDocks();
+    void onOpenProject();
+    void onNewProject();
+    void onSaveProject();
+    void onSaveAsProject();
+    void onNewTemplate();
 
-    void createStatusBar();
+
+private:
+     void createStatusBar();
 
     // File
     QAction* m_newTemplateAction{};
@@ -54,12 +61,16 @@ private:
 
     // Help
     QAction* m_aboutAction{};
-    QTreeWidget* m_widgetTree{};
-    QTreeWidget* m_propertyTree{};
-    QGraphicsView* m_canvasView{};
-    QGraphicsScene* m_canvasScene{};
+
+    //Window composition
+    ElementsDock* m_elementsDock;
+    PropertiesDock* m_propertiesDock;
+    CanvasWidget* m_canvas;
+    VelometricsMenuBar* m_menuBar;
     QLabel* m_statusLabel{};
     MainToolBar* m_toolBar{};
 
+    QString m_currentProjectFile;
+    ActionManager* m_actionManager;
 };
 

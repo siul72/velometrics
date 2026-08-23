@@ -2,7 +2,10 @@
 
 #include <QDockWidget>
 
-class QListWidget;
+#include "../common/ElementType.h"
+
+class QTreeWidget;
+class QTreeWidgetItem;
 
 class ElementsDock : public QDockWidget
 {
@@ -11,9 +14,17 @@ class ElementsDock : public QDockWidget
 public:
     explicit ElementsDock(QWidget* parent = nullptr);
 
-    void addLayer(const QString& name) const;
-    void removeLayer(const QString& name) const;
+    signals:
+        void elementRequested(ElementType element);
+
+
+private slots:
+    void onItemDoubleClicked(
+        const QTreeWidgetItem* item,
+        int column);
 
 private:
-    QListWidget* m_layerList;
+    void buildTree() const;
+
+    QTreeWidget* m_tree;
 };

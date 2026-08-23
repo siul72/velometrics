@@ -4,59 +4,36 @@
 #include <QAction>
 #include <QIcon>
 #include <QSize>
+#include "../ActionManager/ActionManager.h"
 
-MainToolBar::MainToolBar(QWidget* parent)
-    : QToolBar("Main Toolbar", parent)
+
+MainToolBar::MainToolBar(ActionManager* action_manager, QWidget* parent) :
+QToolBar("Main Toolbar", parent),  m_actionManager(action_manager)
 {
-    setObjectName("MainToolbar");
 
+    setObjectName("MainToolbar");
     setMovable(false);
     setFloatable(false);
 
     setIconSize(QSize(24, 24));
 
-    createActions();
-}
+    setToolButtonStyle(
+        Qt::ToolButtonIconOnly);
 
-void MainToolBar::createActions()
-{
-    m_openAction = addAction(
-        QIcon(":/icons/open.svg"),
-        tr("Open"));
+    addAction(
+        m_actionManager->openProject());
 
-    m_saveAction = addAction(
-        QIcon(":/icons/save.svg"),
-        tr("Save"));
+    addAction(
+        m_actionManager->saveProject());
 
     addSeparator();
 
-    m_importFitAction = addAction(
-        QIcon(":/icons/import-fit.svg"),
-        tr("Import FIT"));
+    addAction(
+        m_actionManager->loadTcx());
 
     addSeparator();
 
-    m_renderAction = addAction(
-        QIcon(":/icons/render.svg"),
-        tr("Render"));
+    addAction(
+        m_actionManager->render());
 }
 
-QAction* MainToolBar::openAction() const
-{
-    return m_openAction;
-}
-
-QAction* MainToolBar::saveAction() const
-{
-    return m_saveAction;
-}
-
-QAction* MainToolBar::importFitAction() const
-{
-    return m_importFitAction;
-}
-
-QAction* MainToolBar::renderAction() const
-{
-    return m_renderAction;
-}

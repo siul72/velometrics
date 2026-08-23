@@ -56,7 +56,18 @@ add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-designer/ElementsDock/ElementsDock.cpp
         src/velometrics-designer/ElementsDock/ElementsDock.h
         src/velometrics-designer/MainToolBar/MainToolBar.cpp
-        src/velometrics-designer/MainToolBar/MainToolBar.h)
+        src/velometrics-designer/MainToolBar/MainToolBar.h
+        src/velometrics-designer/Canvas/CanvasWidget.cpp
+        src/velometrics-designer/Canvas/CanvasWidget.h
+        src/velometrics-designer/Canvas/CanvasScene.cpp
+        src/velometrics-designer/Canvas/CanvasScene.h
+        src/velometrics-designer/VelometricsMenuBar/VelometricsMenuBar.cpp
+        src/velometrics-designer/VelometricsMenuBar/VelometricsMenuBar.h
+        src/velometrics-designer/ActionManager/ActionManager.cpp
+        src/velometrics-designer/ActionManager/ActionManager.h
+        src/velometrics-designer/common/ElementType.h
+        src/velometrics-designer/common/ElementType.cpp
+        src/velometrics-designer/common/CanvasItem.h)
 
 target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets yaml-cpp)
 install(TARGETS velometrics RUNTIME DESTINATION bin)

@@ -2,25 +2,17 @@
 
 #include <QToolBar>
 
-class QAction;
+class ActionManager;
 
 class MainToolBar : public QToolBar
 {
     Q_OBJECT
 
 public:
-    explicit MainToolBar(QWidget* parent = nullptr);
 
-    QAction* openAction() const;
-    QAction* saveAction() const;
-    QAction* importFitAction() const;
-    QAction* renderAction() const;
+    explicit MainToolBar(ActionManager* action_manager, QWidget* parent);
 
 private:
-    void createActions();
+    ActionManager* m_actionManager;
 
-    QAction* m_openAction {};
-    QAction* m_saveAction {};
-    QAction* m_importFitAction {};
-    QAction* m_renderAction {};
 };
