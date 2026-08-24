@@ -67,7 +67,10 @@ add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-designer/ActionManager/ActionManager.h
         src/velometrics-designer/common/ElementType.h
         src/velometrics-designer/common/ElementType.cpp
-        src/velometrics-designer/common/CanvasItem.h)
+        src/velometrics-designer/common/CanvasItem.h
+        src/velometrics-designer/Elements/TelemetryWidgetItem.h
+        src/velometrics-designer/Elements/TelemetryWidgetItem.cpp
+        src/velometrics-designer/common/ElementDefinition.h)
 
 target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets yaml-cpp)
 install(TARGETS velometrics RUNTIME DESTINATION bin)

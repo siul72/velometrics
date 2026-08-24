@@ -9,6 +9,6 @@ class CanvasScene : public QGraphicsScene
 
 public:
     explicit CanvasScene(QObject* parent = nullptr);
-    void addElement(ElementType type);
+    void addElement(ElementType element);
 
 };
