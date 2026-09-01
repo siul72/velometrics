@@ -10,6 +10,14 @@ enum class Handle
     BottomRight
 };
 
+#define FREE_STATE = 1
+#define BUILDING_SQUARE = 2
+#define BEGIN_SIDE_EDIT = 3
+#define END_SIDE_EDIT = 4
+
+#define CURSOR_ON_BEGIN_SIDE = 1
+#define CURSOR_ON_END_SIDE = 2
+
 class TelemetryWidgetItem : public QGraphicsObject {
     Q_OBJECT
 public:
@@ -29,6 +37,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 private:
     QSizeF m_size { 1200, 600 };
@@ -39,6 +48,8 @@ private:
     Handle m_activeHandle = Handle::None;
     QPointF m_resizeStartPos;
     QSizeF m_resizeStartSize;
+    bool m_resizing{};
+
 
 };
 

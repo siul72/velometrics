@@ -1,8 +1,10 @@
 #pragma once
 #include <QGraphicsView>
+
 #include "../common/ElementType.h"
 
 class CanvasScene;
+
 
 class CanvasWidget : public QGraphicsView
 {
@@ -17,6 +19,8 @@ public slots:
 protected:
 
     void resizeEvent(QResizeEvent* event) override;
+
+
 
 private:
     CanvasScene* m_scene {};
