@@ -110,7 +110,7 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
             //
             else if (xml.name() == QLatin1String("Position"))
             {
-                GeoLocation gps;
+                GeoPoint gps;
 
                 while (!(xml.isEndElement() &&
                          xml.name() == QLatin1String("Position")))
@@ -134,7 +134,7 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
 
                 sample.addValue(
                     TelemetryValueName::GPS,
-                        QVariant::fromValue(gps),
+                        gps,
                     Unit::None,
                     TelemetryValueType::GeoLocation);
             }

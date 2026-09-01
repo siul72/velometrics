@@ -11,7 +11,7 @@ class TelemetrySample
     QMap<TelemetryValueName, SampleValue> values;
     void addValue(
                     TelemetryValueName telemetry_value_name,
-                    double value,
+                    TelemetryVariant value,
                     Unit unit,
                     TelemetryValueType type);
 };
