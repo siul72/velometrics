@@ -6,8 +6,7 @@
 #include "../Metrics/TelemetryTrack.h"
 
 
-bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
-{
+bool TcxLoader::load(const QString& filename, TelemetryTrack& track){
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -27,11 +26,8 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
 
         TelemetrySample sample;
 
-        while (!(xml.isEndElement() &&
-                 xml.name() == QLatin1String("Trackpoint")))
-        {
+        while (!(xml.isEndElement() && xml.name() == QLatin1String("Trackpoint"))){
             xml.readNext();
-
             if (!xml.isStartElement())
                 continue;
 
@@ -45,7 +41,6 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
                         xml.readElementText(),
                         Qt::ISODate);
             }
-
             //
             // Altitude
             //
@@ -73,11 +68,9 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
             //
             // Cadence
             //
-            else if (xml.name() == QLatin1String("Cadence"))    
-            {
+            else if (xml.name() == QLatin1String("Cadence")){
                 sample.addValue(
                     TelemetryValueName::Cadence,
-
                     xml.readElementText().toInt(),
                     Unit::rpm,
                     TelemetryValueType::Integer);
@@ -86,16 +79,12 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
             //
             // Heart Rate
             //
-            else if (xml.name() == QLatin1String("HeartRateBpm"))
-            {
+            else if (xml.name() == QLatin1String("HeartRateBpm")){
                 while (!(xml.isEndElement() &&
-                         xml.name() == QLatin1String("HeartRateBpm")))
-                {
+                         xml.name() == QLatin1String("HeartRateBpm"))){
                     xml.readNext();
-
                     if (xml.isStartElement() &&
-                        xml.name() == QLatin1String("Value"))
-                    {
+                        xml.name() == QLatin1String("Value")){
                         sample.addValue(
                             TelemetryValueName::HeartRate,
                             xml.readElementText().toInt(),
@@ -104,46 +93,35 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
                     }
                 }
             }
-
             //
             // GPS Position
             //
-            else if (xml.name() == QLatin1String("Position"))
-            {
+            else if (xml.name() == QLatin1String("Position")){
                 GeoPoint gps;
-
                 while (!(xml.isEndElement() &&
-                         xml.name() == QLatin1String("Position")))
-                {
+                         xml.name() == QLatin1String("Position"))){
                     xml.readNext();
-
                     if (!xml.isStartElement())
                         continue;
-
-                    if (xml.name() == QLatin1String("LatitudeDegrees"))
-                    {
+                    if (xml.name() == QLatin1String("LatitudeDegrees")){
                         gps.latitude =
                             xml.readElementText().toDouble();
                     }
-                    else if (xml.name() == QLatin1String("LongitudeDegrees"))
-                    {
+                    else if (xml.name() == QLatin1String("LongitudeDegrees")){
                         gps.longitude =
                             xml.readElementText().toDouble();
                     }
                 }
-
                 sample.addValue(
                     TelemetryValueName::GPS,
-                        gps,
+                        QVariant::fromValue<GeoPoint>(gps),
                     Unit::None,
                     TelemetryValueType::GeoLocation);
             }
-
             //
             // Extensions / TPX
             //
-            else if (xml.name() == QLatin1String("Speed"))
-            {
+            else if (xml.name() == QLatin1String("Speed")){
                 sample.addValue(
                     TelemetryValueName::Speed,
                     xml.readElementText().toDouble() * 3.6,
@@ -151,9 +129,7 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track)
                     TelemetryValueType::Double);
             }
         }
-
         track.addSample(sample);
     }
-
     return !xml.hasError();
 }

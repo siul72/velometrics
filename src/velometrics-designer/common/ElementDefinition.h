@@ -1,9 +1,5 @@
-//
-// Created by jenkins on 8/24/26.
-//
+#pragma once
 
-#ifndef VELOMETRICS_ELEMENTDEFINITION_H
-#define VELOMETRICS_ELEMENTDEFINITION_H
 #include "ElementType.h"
 
 struct ElementDefinition
@@ -36,28 +32,27 @@ static const QHash<ElementType, ElementDefinition> elementDefinitions =
     {
         ElementType::Distance,
         {
-            ElementType::Distance,
-            "Distance",
-            "km",
-            ":/icons/distance.svg",
-            true,
-            true,
-            true
+            .type = ElementType::Distance,
+            .name = "Distance",
+            .defaultUnits = "m",
+            .iconPath = ":/icons/distance.svg",
+            .showIcon = true,
+            .showValue = true,
+            .showUnits = true
         }
     },
 
     {
         ElementType::Gradient,
         {
-            ElementType::Gradient,
-            "Gradient",
-            "%",
-            ":/icons/gradient.svg",
-            true,
-            true,
-            true
+            .type = ElementType::Gradient,
+            .name = "Gradient",
+            .defaultUnits = "%",
+            .iconPath = ":/icons/gradient.svg",
+            .showIcon = true,
+            .showValue = true,
+            .showUnits = true
         }
     }
 };
 
-#endif //VELOMETRICS_ELEMENTDEFINITION_H

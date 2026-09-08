@@ -1,5 +1,6 @@
 #include "ActionManager.h"
 #include <QAction>
+#include <QFileDialog>
 
 ActionManager::ActionManager(QObject* parent) : QObject(parent)
 {
@@ -140,3 +141,4 @@ QAction* ActionManager::exit() const
 {
     return m_exit;
 }
+

@@ -1,7 +1,10 @@
 #include <QApplication>
 #include "MainWindow.h"
+#include "../velometrics-core/Metrics/Telemetry.h"
 
 int main(int argc,char** argv){
+    qRegisterMetaType<GeoPoint>();
+
     QApplication app(argc,argv);
 
     QApplication::setApplicationName("Velometrics");
@@ -11,5 +14,5 @@ int main(int argc,char** argv){
     MainWindow mainWindow;
     mainWindow.show();
 
-    return app.exec();
+    return QApplication::exec();
 }

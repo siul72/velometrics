@@ -37,6 +37,7 @@ public:
     [[nodiscard]] QAction* about() const;
     [[nodiscard]] QAction* exit() const;
 
+
 private:
     QAction* m_newTemplate;
     QAction* m_openTemplate;

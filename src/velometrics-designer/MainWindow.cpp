@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include <QAction>
+#include <qboxlayout.h>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QToolBar>
@@ -11,6 +12,7 @@
 #include  <QLabel>
 #include <QStatusBar>
 #include  <QFileDialog>
+#include <QSlider>
 
 #include "Canvas/CanvasWidget.h"
 #include "ElementsDock/ElementsDock.h"
@@ -18,26 +20,28 @@
 #include "PropertiesDock/PropertiesDock.h"
 #include "ActionManager/ActionManager.h"
 #include "VelometricsMenuBar/VelometricsMenuBar.h"
+#include "../velometrics-core/VelometricsCore.h"
 
 MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
 
     m_actionManager = new ActionManager(this);
     m_menuBar = new VelometricsMenuBar(m_actionManager, this);
-
     setMenuBar(m_menuBar);
-
-    connect(
-        m_actionManager->about(),
-        &QAction::triggered,
-        this,
-        &MainWindow::onAboutTriggered);
-
     m_toolBar = new MainToolBar(m_actionManager, this);
-
     addToolBar(Qt::TopToolBarArea,m_toolBar);
 
+    auto* centralWidget = new QWidget(this);
+    auto* layout = new QVBoxLayout(centralWidget);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
     m_canvas = new CanvasWidget(this);
-    setCentralWidget(m_canvas);
+    m_playbackWidget = new PlayToolBar(this);
+
+    layout->addWidget(m_canvas, 1);
+    layout->addWidget(m_playbackWidget, 0);
+
+    setCentralWidget(centralWidget);
 
     m_elementsDock = new ElementsDock(this);
     addDockWidget( Qt::LeftDockWidgetArea, m_elementsDock);
@@ -50,11 +54,58 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
     resize(1600, 1000);
 
     connect(
+    m_actionManager->about(),
+    &QAction::triggered,
+    this,
+    &MainWindow::onAboutTriggered);
+
+    connect(
     m_elementsDock,
     &ElementsDock::elementRequested,
     m_canvas,
     &CanvasWidget::addElement);
-     
+
+    const auto& core = VelometricsCore::instance();
+
+    connect(&core,
+        &VelometricsCore::activityLoaded,
+        this,
+        &MainWindow::onActivityLoaded);
+
+    connect(&core,
+        &VelometricsCore::activityLoaded,
+        m_playbackWidget,
+        &PlayToolBar::onActivityLoaded);
+
+    connect(m_playbackWidget,
+            &PlayToolBar::playRequested,
+            &core,
+            &VelometricsCore::play);
+
+    connect(m_playbackWidget,
+            &PlayToolBar::pauseRequested,
+            &core,
+            &VelometricsCore::pause);
+
+    connect(m_playbackWidget,
+            &PlayToolBar::stopRequested,
+            &core,
+            &VelometricsCore::stop);
+
+    connect(m_playbackWidget,
+            &PlayToolBar::seekRequested,
+            &core,
+            &VelometricsCore::seek);
+
+    connect(&core,
+            &VelometricsCore::playbackPositionChanged,
+            m_playbackWidget,
+            &PlayToolBar::setPosition);
+
+    connect(&core,
+            &VelometricsCore::timestampChanged,
+            m_playbackWidget,
+            &PlayToolBar::setTimestamp);
 
 }
 
@@ -134,8 +185,12 @@ void MainWindow::onSaveAsProject()
 {
 }
 
-void MainWindow::onNewTemplate()
-{
+void MainWindow::onNewTemplate(){
+}
+
+void MainWindow::onActivityLoaded(const qsizetype numSamples) const {
+    m_statusLabel->setText(
+        QString("Loaded %1 samples").arg(numSamples));
 }
 
 void MainWindow::createStatusBar(){

@@ -1,5 +1,6 @@
 #pragma once
-#include <qdatetime.h>
+#include <QMetaType>
+#include <QVariant>
 
 enum class Unit
 {
@@ -20,6 +21,9 @@ struct GeoPoint
     double longitude = 0.0;
 };
 
+
+Q_DECLARE_METATYPE(GeoPoint)
+
 enum class TelemetryValueName{
     Altitude,
     Speed,
@@ -38,17 +42,12 @@ enum class TelemetryValueType
     GeoLocation
 };
 
-using TelemetryVariant = std::variant<
-    int,
-    double,
-    QString,
-    GeoPoint
->;
+using TelemetryVariant =  QVariant;
 
 struct SampleValue
 {
     TelemetryValueName name;
-    TelemetryVariant value;
+    QVariant value;
     Unit unit;
 };
 

@@ -6,7 +6,8 @@
 #include<QGraphicsSceneMouseEvent>
 #include "../common/ElementDefinition.h"
 #include "../common/VeloMetricsConfig.h"
-
+#include "../../velometrics-core/Metrics/TelemetrySample.h"
+#include  "../../velometrics-core/VelometricsCore.h"
 
 
 TelemetryWidgetItem::TelemetryWidgetItem(ElementDefinition  definition, QGraphicsItem* parent) :
@@ -16,6 +17,9 @@ QGraphicsObject(parent),  m_definition(std::move(definition)){
     setAcceptedMouseButtons(Qt::LeftButton);
     setAcceptHoverEvents(true);
     m_boundingRect = QRectF(0, 0, m_size.width(), m_size.height());
+
+    connect(&VelometricsCore::instance(), &VelometricsCore::sampleChanged,
+        this, &TelemetryWidgetItem::onSampleChanged);
 }
 
 QRectF TelemetryWidgetItem::boundingRect() const
@@ -38,29 +42,60 @@ void TelemetryWidgetItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
         painter->drawPixmap(10,10,24,24, m_definition.iconPath);
     }
 
-    if(m_definition.showValue){
-        painter->drawText(
-            QRectF(0, 40, m_boundingRect.width(), 60),
-            Qt::AlignCenter,
-            m_previewValue);
-    }
 
-    if(m_definition.showUnits) {
-        painter->drawText(
-            QRectF(0, 100, m_boundingRect.width(), 20),
-            Qt::AlignCenter,
-            m_definition.defaultUnits);
-    }
+    const int valueFontSize = std::max(12, static_cast<int>(m_boundingRect.height() * 0.30));
 
-    if (isSelected()){
+    const int unitFontSize = std::max(8, static_cast<int>(valueFontSize * 0.45));
 
-        painter->setPen(QPen(Qt::black, 4, Qt::DashLine));
-        painter->drawRect(boundingRect());
+    QFont valueFont;
+    valueFont.setBold(true);
+    valueFont.setPixelSize(valueFontSize);
+
+    QFont unitFont;
+    unitFont.setPixelSize(unitFontSize);
+
+    const QFontMetrics valueFm(valueFont);
+    const QFontMetrics unitFm(unitFont);
+
+    const QString value = m_value;
+    const QString units = m_definition.defaultUnits;
+
+    const int valueWidth = valueFm.horizontalAdvance(value);
+    const int unitWidth  = unitFm.horizontalAdvance(units);
+
+    const int spacing = valueFontSize / 5;
+    const int totalWidth = valueWidth + spacing + unitWidth;
+
+    const double x = (m_boundingRect.width() - totalWidth) / 2.0;
+    const double y = m_boundingRect.height() / 2.0;
+
+    painter->setPen(Qt::white);
+
+    // Draw value
+    painter->setFont(valueFont);
+    painter->drawText(QPointF(x, y),value);
+
+    // Draw units
+    painter->setFont(unitFont);
+    painter->drawText(QPointF(x + valueWidth + spacing,y), units);
+
+    if (isSelected()) {
+        painter->save();
+
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(QPen(Qt::black, 2, Qt::DashLine));
+
+        // Slightly inset the border
+        const QRectF borderRect = boundingRect().adjusted(1, 1, -1, -1);
+        painter->drawRect(borderRect);
 
         painter->setBrush(Qt::white);
         painter->setPen(QPen(Qt::cyan, 2));
         painter->drawRect(resizeHandle());
+
+        painter->restore();
     }
+
 
 
 }
@@ -147,4 +182,44 @@ QVariant TelemetryWidgetItem::itemChange(const GraphicsItemChange change, const 
     }
 
     return QGraphicsObject::itemChange(change, value);
+}
+
+const TelemetryValueName* telemetryValueNameFromElementType(ElementType type)
+{
+    static const QHash<ElementType, TelemetryValueName> map = {
+        {ElementType::Speed,      TelemetryValueName::Speed},
+        {ElementType::HeartRate,  TelemetryValueName::HeartRate},
+        {ElementType::Power,      TelemetryValueName::Power},
+        {ElementType::Cadence,    TelemetryValueName::Cadence},
+        {ElementType::Elevation,  TelemetryValueName::Altitude},
+        {ElementType::Distance,   TelemetryValueName::Distance}
+    };
+
+    auto it = map.find(type);
+    return it != map.end() ? &it.value() : nullptr;
+}
+
+
+void TelemetryWidgetItem::onSampleChanged(const TelemetrySample& sample) {
+    const auto& sample_type = telemetryValueNameFromElementType(m_definition.type);
+    const auto* sample_value = sample.get(*sample_type);
+    setVisible(sample_value != nullptr);
+    if (!sample_value) {
+        hide();
+        return;
+    }
+
+    switch (sample_value->value.typeId()) {
+        case QMetaType::Double:
+        case QMetaType::Float:
+            m_value = QString::number(
+                sample_value->value.toDouble(), 'f', 1);
+            break;
+
+        default:
+            m_value = sample_value->value.toString();
+            break;
+    }
+
+    update();
 }

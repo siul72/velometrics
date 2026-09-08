@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
-
 #include "ActionManager/ActionManager.h"
+#include "PlayToolBar/PlayToolBar.h"
 
 class QAction;
 class QMenu;
@@ -17,9 +17,9 @@ class ElementsDock;
 class PropertiesDock;
 class CanvasWidget;
 class VelometricsMenuBar;
+class QSlider;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -32,7 +32,7 @@ public slots:
     void onSaveProject();
     void onSaveAsProject();
     void onNewTemplate();
-
+    void onActivityLoaded(qsizetype numSamples) const;
 
 private:
      void createStatusBar();
@@ -69,6 +69,7 @@ private:
     VelometricsMenuBar* m_menuBar;
     QLabel* m_statusLabel{};
     MainToolBar* m_toolBar{};
+    PlayToolBar* m_playbackWidget{};
 
     QString m_currentProjectFile;
     ActionManager* m_actionManager;

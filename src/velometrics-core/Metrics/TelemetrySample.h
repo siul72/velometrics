@@ -1,10 +1,13 @@
 #pragma once
-#include <qdatetime.h>
+#include <QDateTime>
 #include "../Metrics/Telemetry.h"
+
 
 
 class TelemetrySample
 {
+
+
     public:
 
     QDateTime timestamp;
@@ -14,6 +17,8 @@ class TelemetrySample
                     TelemetryVariant value,
                     Unit unit,
                     TelemetryValueType type);
+    [[nodiscard]] const SampleValue* get(TelemetryValueName name) const;
+
 };
 
 
