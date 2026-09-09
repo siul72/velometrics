@@ -28,6 +28,7 @@ public:
     [[nodiscard]] const TelemetryTrack& getTelemetryTrack() const {
         return m_activity;
     }
+    [[nodiscard]] QDateTime timestampAt(int index) const;
 
     signals:
         void activityLoaded(qsizetype numSamples);

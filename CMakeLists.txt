@@ -82,7 +82,9 @@ add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-core/VelometricsCore.cpp
         src/velometrics-core/VelometricsCore.h
         src/velometrics-designer/PlayToolBar/PlayToolBar.cpp
-        src/velometrics-designer/PlayToolBar/PlayToolBar.h)
+        src/velometrics-designer/PlayToolBar/PlayToolBar.h
+        src/velometrics-designer/RangeSlider/RangeSlider.cpp
+        src/velometrics-designer/RangeSlider/RangeSlider.h)
 
 target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets yaml-cpp)
 install(TARGETS velometrics RUNTIME DESTINATION bin)

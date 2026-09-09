@@ -65,4 +65,12 @@ void VelometricsCore::onTimerTimeout(){
     ++m_currentSampleIndex;
 }
 
+QDateTime VelometricsCore::timestampAt(const int index) const {
+    if (index >= m_activity.samples.size()) {
+        return {};
+    }
+    return m_activity.samples.at(index).timestamp;
+}
+
+
 

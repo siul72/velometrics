@@ -1,9 +1,10 @@
  #pragma once
-
+#include <QPushButton>
 # include <QWidget>
+#include "../RangeSlider/RangeSlider.h"
 
  class QLabel;
- class QSlider;
+
 
 class PlayToolBar : public QWidget{
  Q_OBJECT
@@ -27,7 +28,18 @@ private:
  QAction* m_pauseAction{};
  QAction* m_stopAction{};
 
- QSlider* m_slider{};
+ RangeSlider* m_slider{};
  QLabel* m_timestampLabel{};
+
+ QPushButton* m_markInButton;
+ QPushButton* m_markOutButton;
+
+ QLabel* m_startLabel{};
+ QLabel* m_endLabel{};
+ static void updateTimeLabel(QLabel* label, int position);
+
+private slots:
+   void onMarkInClicked() const;
+   void onMarkOutClicked() const;
 };
 
