@@ -55,18 +55,12 @@ PlayToolBar::PlayToolBar(QWidget* parent): QWidget(parent){
     connect(stopButton, &QPushButton::clicked, this, &PlayToolBar::stopRequested);
     connect(m_slider, &QSlider::sliderReleased, this, [this](){emit seekRequested(m_slider->value());});
     connect(m_slider, &QSlider::sliderPressed, this, [this](){emit pauseRequested();});
-    connect(
-    m_markInButton,
-    &QPushButton::clicked,
-    this,
-    &PlayToolBar::onMarkInClicked);
-
-    connect(
-        m_markOutButton,
-        &QPushButton::clicked,
-        this,
-        &PlayToolBar::onMarkOutClicked);
+    connect(m_markInButton,&QPushButton::clicked,this,&PlayToolBar::onMarkInClicked);
+    connect(m_markOutButton,&QPushButton::clicked,this,&PlayToolBar::onMarkOutClicked);
+    connect(m_slider, &RangeSlider::updateRange, &VelometricsCore::instance(), &VelometricsCore::setRenderBoundary);
+    //connect(m_slider, &QSlider::rangeChanged, &VelometricsCore::instance(), &VelometricsCore::setRenderBoundary);
 }
+
 
 void PlayToolBar::setPosition(const qsizetype position) const{
     m_slider->setValue(static_cast<int>(position));

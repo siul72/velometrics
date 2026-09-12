@@ -48,6 +48,15 @@ add_subdirectory(tests)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(yaml-cpp REQUIRED)
 
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(FFMPEG REQUIRED
+        libavcodec
+        libavformat
+        libavutil
+        libswscale
+)
+
 add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-designer/MainWindow.cpp
         src/velometrics-designer/MainWindow.h
@@ -84,8 +93,22 @@ add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-designer/PlayToolBar/PlayToolBar.cpp
         src/velometrics-designer/PlayToolBar/PlayToolBar.h
         src/velometrics-designer/RangeSlider/RangeSlider.cpp
-        src/velometrics-designer/RangeSlider/RangeSlider.h)
+        src/velometrics-designer/RangeSlider/RangeSlider.h
+        src/velometrics-core/Rendering/VideoRenderService.cpp
+        src/velometrics-core/Rendering/VideoRenderService.h)
 
-target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets yaml-cpp)
+target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets yaml-cpp
+        ${AVCODEC_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWSCALE_LIBRARIES} )
 install(TARGETS velometrics RUNTIME DESTINATION bin)
 install(FILES resources/velometrics-config.yaml DESTINATION share/velometrics)
+
+
+target_include_directories(
+        velometrics PRIVATE
+        ${FFMPEG_INCLUDE_DIRS}
+)
+
+target_link_libraries(
+        velometrics PRIVATE
+        ${FFMPEG_LIBRARIES}
+)

@@ -9,23 +9,23 @@ class RangeSlider : public QSlider
 public:
     explicit RangeSlider(QWidget* parent = nullptr);
 
-    int rangeStart() const;
-    int rangeEnd() const;
+    [[nodiscard]] int rangeStart() const;
+    [[nodiscard]] int rangeEnd() const;
 
 public slots:
     void setRangeStart(int value);
     void setRangeEnd(int value);
 
     signals:
-        void rangeChanged(int start, int end);
+        void updateRange(int start, int end);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
 
 private:
-    int valueToPixel(int value) const;
-    int pixelToValue(int x) const;
+    [[nodiscard]] int valueToPixel(int value) const;
+    [[nodiscard]] int pixelToValue(int x) const;
 
 private:
     int m_rangeStart{0};

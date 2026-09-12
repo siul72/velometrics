@@ -10,6 +10,15 @@ class CanvasScene : public QGraphicsScene
 public:
     explicit CanvasScene(QObject* parent = nullptr);
     void addElement(ElementType element);
+    void setHelpersVisible(bool visible);
     VelometricsConfiguration m_config{};
 
+    QImage renderFrame( const QSize& outputSize, const QColor& background = Qt::black);
+
+private:
+    QGraphicsRectItem* m_border = nullptr;
+    QList<QGraphicsLineItem*> m_gridLines;
+
 };
+
+

@@ -17,12 +17,11 @@ int RangeSlider::rangeEnd() const {
 }
 
 void RangeSlider::setRangeStart(int value) {
-
     value = qBound(minimum(), value, m_rangeEnd);
     if (m_rangeStart == value)
         return;
     m_rangeStart = value;
-    emit rangeChanged(m_rangeStart, m_rangeEnd);
+    emit updateRange(m_rangeStart, m_rangeEnd);
     update();
 }
 
@@ -30,9 +29,8 @@ void RangeSlider::setRangeEnd(int value){
     value = qBound(m_rangeStart, value, maximum());
     if (m_rangeEnd == value)
         return;
-
     m_rangeEnd = value;
-    emit rangeChanged(m_rangeStart, m_rangeEnd);
+    emit updateRange(m_rangeStart, m_rangeEnd);
     update();
 }
 
@@ -115,7 +113,6 @@ void RangeSlider::paintEvent(QPaintEvent* event) {
     //
     // End marker
     //
-
     p.setPen(QPen(QColor(0xF44336), 2));
 
     p.drawLine(
@@ -127,7 +124,6 @@ void RangeSlider::paintEvent(QPaintEvent* event) {
     //
     // Small handles
     //
-
     p.setBrush(QColor(0x4CAF50));
     p.setPen(Qt::NoPen);
     p.drawEllipse(QPointF(startX, centerY), 4, 4);
@@ -136,23 +132,14 @@ void RangeSlider::paintEvent(QPaintEvent* event) {
 }
 
 void RangeSlider::mouseDoubleClickEvent(QMouseEvent* event){
-    const int clickedValue =
-        pixelToValue(static_cast<int>(event->position().x()));
-
-    const int distToStart =
-        qAbs(clickedValue - m_rangeStart);
-
-    const int distToEnd =
-        qAbs(clickedValue - m_rangeEnd);
-
-    if (distToStart < distToEnd)
-    {
+    const int clickedValue = pixelToValue(static_cast<int>(event->position().x()));
+    const int distToStart = qAbs(clickedValue - m_rangeStart);
+    const int distToEnd = qAbs(clickedValue - m_rangeEnd);
+    if (distToStart < distToEnd){
         setRangeStart(clickedValue);
     }
-    else
-    {
+    else{
         setRangeEnd(clickedValue);
     }
-
     QSlider::mouseDoubleClickEvent(event);
 }

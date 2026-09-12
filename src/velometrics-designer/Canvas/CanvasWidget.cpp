@@ -1,16 +1,14 @@
 #include "CanvasWidget.h"
-
 #include "CanvasScene.h"
-
 #include <QResizeEvent>
-
+#include "../../velometrics-core/VelometricsCore.h"
 
 CanvasWidget::CanvasWidget(QWidget* parent)
     : QGraphicsView(parent)
 {
     m_scene = new CanvasScene(this);
-
     setScene(m_scene);
+    VelometricsCore::instance().setCanvasScene(m_scene);
 
     setRenderHint(QPainter::Antialiasing);
     setRenderHint(QPainter::TextAntialiasing);

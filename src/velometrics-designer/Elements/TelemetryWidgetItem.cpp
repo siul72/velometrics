@@ -220,6 +220,6 @@ void TelemetryWidgetItem::onSampleChanged(const TelemetrySample& sample) {
             m_value = sample_value->value.toString();
             break;
     }
-
+    qDebug() << "widget updated " << m_value << " value";
     update();
 }

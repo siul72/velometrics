@@ -13,6 +13,10 @@ class CanvasWidget : public QGraphicsView
 public:
     explicit CanvasWidget(QWidget* parent = nullptr);
 
+    [[nodiscard]] CanvasScene* getScene() const {
+        return m_scene;
+    }
+
 public slots:
     void addElement(ElementType type) const;
 

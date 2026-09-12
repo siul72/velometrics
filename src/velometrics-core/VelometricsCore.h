@@ -3,6 +3,7 @@
 #include <QTimer>
 #include "Activities/TCXLoader.h"
 #include "Metrics/TelemetryTrack.h"
+#include "../velometrics-designer/Canvas/CanvasScene.h"
 
 class ActivityManager;
 
@@ -23,12 +24,18 @@ public:
         }
         return ret;
     }
-
-
     [[nodiscard]] const TelemetryTrack& getTelemetryTrack() const {
         return m_activity;
     }
     [[nodiscard]] QDateTime timestampAt(int index) const;
+
+    void setCurrentIndex(const int index){
+        m_currentSampleIndex = index;
+    }
+
+    void setCanvasScene(CanvasScene* scene){
+        m_scene = scene;
+    }
 
     signals:
         void activityLoaded(qsizetype numSamples);
@@ -41,7 +48,9 @@ public:
         void pause();
         void stop();
         void seek(int position);
-
+        void setRenderBoundary(int start, int end);
+        void render() const;
+        void setPlaybackPosition(qsizetype index);
 
 private:
     explicit VelometricsCore(QObject* parent = nullptr);
@@ -49,7 +58,9 @@ private:
     TelemetryTrack m_activity{};
     QTimer m_timer;
     qsizetype m_currentSampleIndex {0};
-
+    qsizetype m_start_render_index {0};
+    qsizetype m_end_render_index {0};
+    CanvasScene* m_scene {nullptr};
 
 private slots:
     void startTimer();
