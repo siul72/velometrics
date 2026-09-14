@@ -27,26 +27,13 @@ ElementsDock::ElementsDock(QWidget* parent)
 
 void ElementsDock::buildTree() const
 {
-    auto* metrics =
-        new QTreeWidgetItem({"Metrics"});
-
-    metrics->addChild(
-        new QTreeWidgetItem({"Speed"}));
-
-    metrics->addChild(
-        new QTreeWidgetItem({"Heart Rate"}));
-
-    metrics->addChild(
-        new QTreeWidgetItem({"Power"}));
-
-    metrics->addChild(
-        new QTreeWidgetItem({"Cadence"}));
-
-    metrics->addChild(
-        new QTreeWidgetItem({"Distance"}));
-
-    metrics->addChild(
-        new QTreeWidgetItem({"Elevation"}));
+    auto* metrics = new QTreeWidgetItem({"Metrics"});
+    metrics->addChild( new QTreeWidgetItem({"Speed"}));
+    metrics->addChild( new QTreeWidgetItem({"HeartRate"}));
+    metrics->addChild(new QTreeWidgetItem({"Power"}));
+    metrics->addChild(new QTreeWidgetItem({"Cadence"}));
+    metrics->addChild(new QTreeWidgetItem({"Distance"}));
+    metrics->addChild(new QTreeWidgetItem({"Elevation"}));
 
     auto* graphics =
         new QTreeWidgetItem({"Graphics"});

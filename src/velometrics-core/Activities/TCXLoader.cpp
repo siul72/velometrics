@@ -5,6 +5,61 @@
 #include <QXmlStreamReader>
 #include "../Metrics/TelemetryTrack.h"
 
+void TcxLoader::calculateDerivedMetrics(TelemetryTrack& track) {
+
+    if (track.samples.count() < 2){
+        return;
+    }
+
+    track.samples[0].addValue(TelemetryValueName::Speed,0.0,Unit::KilometerPerHour, TelemetryValueType::Double);
+    track.samples[0].addValue(TelemetryValueName::Gradient,0.0,Unit::Percent,TelemetryValueType::Double);
+
+    for (int i = 1; i < track.samples.count(); ++i){
+        TelemetrySample* previous  = &track.samples[i -1];
+        TelemetrySample* current = &track.samples[i];
+
+        const double previousDistance = previous->values.value(TelemetryValueName::Distance).value.toDouble();
+        const double currentDistance = current->values.value(TelemetryValueName::Distance).value.toDouble();
+
+        const double previousAltitude = previous->values.value(TelemetryValueName::Altitude).value.toDouble();
+        const double currentAltitude = current->values.value(TelemetryValueName::Altitude).value.toDouble();
+
+        const double deltaDistance = currentDistance - previousDistance;
+        const double deltaAltitude = currentAltitude - previousAltitude;
+
+        const double deltaTimeSeconds = previous->timestamp.msecsTo(current->timestamp) / 1000.0;
+
+        //
+        // Speed (km/h)
+        //
+        double speedKmh = 0;
+        if (deltaTimeSeconds > 0.0 && deltaDistance > 0.0){
+            speedKmh = (deltaDistance / deltaTimeSeconds) * 3.6;
+        }
+
+        current->addValue(
+            TelemetryValueName::Speed,
+            speedKmh,
+            Unit::KilometerPerHour,
+            TelemetryValueType::Double);
+
+
+        //
+        // Gradient (%)
+        //
+        double gradient = 0;
+        if (std::abs(deltaDistance) > 0.0 && deltaAltitude > 0.0){
+            gradient = (deltaAltitude / deltaDistance) * 100.0;
+        }
+
+        current->addValue(
+            TelemetryValueName::Gradient,
+            gradient,
+            Unit::Percent,
+            TelemetryValueType::Double);
+
+    }
+}
 
 bool TcxLoader::load(const QString& filename, TelemetryTrack& track){
     QFile file(filename);
@@ -46,9 +101,10 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track){
             //
             else if (xml.name() == QLatin1String("AltitudeMeters"))
             {
+                QString value = xml.readElementText();
                 sample.addValue(
                     TelemetryValueName::Altitude,
-                    xml.readElementText().toDouble(),
+                    value.toDouble(),
                     Unit::Meter,
                     TelemetryValueType::Double);
             }
@@ -58,6 +114,7 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track){
             //
             else if (xml.name() == QLatin1String("DistanceMeters"))
             {
+
                 sample.addValue(
                     TelemetryValueName::Distance,
                     xml.readElementText().toDouble(),
@@ -104,32 +161,31 @@ bool TcxLoader::load(const QString& filename, TelemetryTrack& track){
                     if (!xml.isStartElement())
                         continue;
                     if (xml.name() == QLatin1String("LatitudeDegrees")){
-                        gps.latitude =
-                            xml.readElementText().toDouble();
+                        gps.latitude = xml.readElementText().toDouble();
                     }
                     else if (xml.name() == QLatin1String("LongitudeDegrees")){
-                        gps.longitude =
-                            xml.readElementText().toDouble();
+                        gps.longitude = xml.readElementText().toDouble();
                     }
                 }
-                sample.addValue(
-                    TelemetryValueName::GPS,
-                        QVariant::fromValue<GeoPoint>(gps),
+                sample.addValue(TelemetryValueName::GPS,QVariant::fromValue<GeoPoint>(gps),
                     Unit::None,
                     TelemetryValueType::GeoLocation);
             }
-            //
-            // Extensions / TPX
-            //
+
             else if (xml.name() == QLatin1String("Speed")){
+                QString value = xml.readElementText();
+                double speed = value.toDouble();
+                speed = speed * 3.6;
                 sample.addValue(
                     TelemetryValueName::Speed,
-                    xml.readElementText().toDouble() * 3.6,
+                    speed,
                     Unit::KilometerPerHour,
                     TelemetryValueType::Double);
             }
         }
+
         track.addSample(sample);
     }
+    calculateDerivedMetrics(track);
     return !xml.hasError();
 }

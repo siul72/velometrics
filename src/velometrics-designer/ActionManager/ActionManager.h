@@ -34,6 +34,10 @@ public:
     [[nodiscard]] QAction* showSafeArea() const;
     [[nodiscard]] QAction* showRulers() const;
 
+    [[nodiscard]] QAction* removeAction() const;
+    [[nodiscard]] QAction* alignTopAction() const;
+    [[nodiscard]] QAction* matchSizeAction() const;
+
     [[nodiscard]] QAction* about() const;
     [[nodiscard]] QAction* exit() const;
 
@@ -63,4 +67,7 @@ private:
     QAction* m_openProject;
     QAction* m_saveProject;
     QAction* m_render;
+    QAction* m_removeAction;
+    QAction* m_alignTop;
+    QAction* m_matchSizeAction;
 };

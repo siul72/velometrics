@@ -23,7 +23,7 @@ public:
     [[nodiscard]] qint64 durationMs() const;
     [[nodiscard]] static qint64 currentPositionMs();
     [[nodiscard]] static ExportRange exportRange();
-    [[nodiscard]] const TelemetrySample* sampleAt(qint64 timestampMs) const;
+    [[nodiscard]] TelemetrySample* sampleAt(qint64 timestampMs);
 
     void clear();
     bool addSample(const TelemetrySample& sample);

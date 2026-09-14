@@ -1,6 +1,7 @@
 #include "CanvasScene.h"
 #include <QGraphicsTextItem>
 #include <QPainter>
+#include <QKeyEvent>
 
 #include "../common/ElementDefinition.h"
 #include "../Elements/TelemetryWidgetItem.h"
@@ -26,6 +27,7 @@ CanvasScene::CanvasScene(QObject* parent): QGraphicsScene(parent){
 
 void CanvasScene::addElement(const ElementType element) {
     const auto def =  elementDefinitions.value(element);
+    qDebug() << "Adding element: "<< elementTypeToString(element) << " units:" << def.defaultUnits;
     auto* widget = new TelemetryWidgetItem(def);
     widget->setPos(100, 100);
     addItem(widget);
@@ -60,6 +62,95 @@ void CanvasScene::setHelpersVisible(const bool visible){
 
     for (auto* line : m_gridLines)
         line->setVisible(visible);
+}
+
+void CanvasScene::removeSelectedItems() {
+    for (const auto items = selectedItems(); QGraphicsItem* item : items)
+    {
+        removeItem(item);
+        delete item;
+    }
+}
+
+void CanvasScene::keyPressEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_Delete)
+    {
+        removeSelectedItems();
+        return;
+    }
+
+    QGraphicsScene::keyPressEvent(event);
+}
+
+void CanvasScene::alignTop() const
+{
+    const auto items = selectedItems();
+    if (items.size() < 2)
+        return;
+    const qreal topY = items.first()->pos().y();
+    for (int i = 1; i < items.size(); ++i) {
+        auto* item = items[i];
+        item->setPos( item->pos().x(), topY);
+    }
+}
+
+void CanvasScene::matchSize() const {
+    const auto items = selectedItems();
+    if (items.size() < 2)
+        return;
+    const auto* reference = dynamic_cast<TelemetryWidgetItem*>(items.first());
+    if (!reference)
+        return;
+    const QSizeF targetSize = reference->size();
+    for (int i = 1; i < items.size(); ++i) {
+        auto* widget = dynamic_cast<TelemetryWidgetItem*>(items[i]);
+        if (!widget)
+            continue;
+        widget->setSize(targetSize);
+    }
+}
+
+void CanvasScene::distributeHorizontally() {
+    auto items = selectedItems();
+
+    if (items.size() < 3)
+        return;
+
+    std::ranges::sort(items,
+                      [](QGraphicsItem* a, QGraphicsItem* b) {
+                          return a->sceneBoundingRect().left()
+                              < b->sceneBoundingRect().left();
+                      });
+
+    qreal totalWidth = 0.0;
+
+    for (const auto* item : items)
+        totalWidth += item->sceneBoundingRect().width();
+
+    const qreal left =
+        items.first()->sceneBoundingRect().left();
+
+    const qreal right =
+        items.last()->sceneBoundingRect().right();
+
+    const qreal freeSpace =
+        right - left - totalWidth;
+
+    const qreal gap =
+        freeSpace / (items.size() - 1);
+
+    qreal currentX = left;
+
+    for (auto* item : items)
+    {
+        QRectF rect = item->sceneBoundingRect();
+
+        item->moveBy(
+            currentX - rect.left(),
+            0.0);
+
+        currentX += rect.width() + gap;
+    }
 }
 
 

@@ -4,11 +4,14 @@
 #include <qpainter.h>
 #include <utility>
 #include<QGraphicsSceneMouseEvent>
+#include <QIcon>
+#include <QRectF>
+
 #include "../common/ElementDefinition.h"
 #include "../common/VeloMetricsConfig.h"
 #include "../../velometrics-core/Metrics/TelemetrySample.h"
 #include  "../../velometrics-core/VelometricsCore.h"
-
+#include "../../velometrics-core/Templates/TemplateManager.h"
 
 TelemetryWidgetItem::TelemetryWidgetItem(ElementDefinition  definition, QGraphicsItem* parent) :
 QGraphicsObject(parent),  m_definition(std::move(definition)){
@@ -17,13 +20,14 @@ QGraphicsObject(parent),  m_definition(std::move(definition)){
     setAcceptedMouseButtons(Qt::LeftButton);
     setAcceptHoverEvents(true);
     m_boundingRect = QRectF(0, 0, m_size.width(), m_size.height());
-
+    m_icon = TemplateManager::instance().icon(elementTypeToString(definition.type));
     connect(&VelometricsCore::instance(), &VelometricsCore::sampleChanged,
-        this, &TelemetryWidgetItem::onSampleChanged);
+            this, &TelemetryWidgetItem::onSampleChanged);
+
+
 }
 
-QRectF TelemetryWidgetItem::boundingRect() const
-{
+QRectF TelemetryWidgetItem::boundingRect() const{
     return m_boundingRect;
 }
 
@@ -38,13 +42,15 @@ void TelemetryWidgetItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
         painter->drawRoundedRect(m_boundingRect, 10, 10);
     }
 
+    int icon_size = 0;
+    const int elements_margin = static_cast<int>(std::ceil(m_boundingRect.height() * 0.15));
     if(m_definition.showIcon){
-        painter->drawPixmap(10,10,24,24, m_definition.iconPath);
+        icon_size = qRound(0.8 * qMin(m_boundingRect.width()-elements_margin,m_boundingRect.height()-elements_margin));
+        const QRect iconRect(elements_margin, elements_margin, icon_size, icon_size);
+        m_icon.paint(painter, iconRect);
     }
 
-
     const int valueFontSize = std::max(12, static_cast<int>(m_boundingRect.height() * 0.30));
-
     const int unitFontSize = std::max(8, static_cast<int>(valueFontSize * 0.45));
 
     QFont valueFont;
@@ -53,7 +59,6 @@ void TelemetryWidgetItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
 
     QFont unitFont;
     unitFont.setPixelSize(unitFontSize);
-
     const QFontMetrics valueFm(valueFont);
     const QFontMetrics unitFm(unitFont);
 
@@ -66,22 +71,21 @@ void TelemetryWidgetItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
     const int spacing = valueFontSize / 5;
     const int totalWidth = valueWidth + spacing + unitWidth;
 
-    const double x = (m_boundingRect.width() - totalWidth) / 2.0;
-    const double y = m_boundingRect.height() / 2.0;
-
+    const double x = icon_size/0.8 + elements_margin + spacing;
     painter->setPen(Qt::white);
 
     // Draw value
     painter->setFont(valueFont);
-    painter->drawText(QPointF(x, y),value);
+    const QRectF valueRect(x,0,valueWidth,m_boundingRect.height());
+    painter->drawText(valueRect, Qt::AlignVCenter | Qt::AlignRight,value);
 
     // Draw units
     painter->setFont(unitFont);
-    painter->drawText(QPointF(x + valueWidth + spacing,y), units);
+    const QRectF unitRect(x + valueWidth + unitWidth,0,unitWidth,m_boundingRect.height());
+    painter->drawText(unitRect, Qt::AlignVCenter | Qt::AlignRight, units);
 
     if (isSelected()) {
         painter->save();
-
         painter->setBrush(Qt::NoBrush);
         painter->setPen(QPen(Qt::black, 2, Qt::DashLine));
 
@@ -192,7 +196,8 @@ const TelemetryValueName* telemetryValueNameFromElementType(ElementType type)
         {ElementType::Power,      TelemetryValueName::Power},
         {ElementType::Cadence,    TelemetryValueName::Cadence},
         {ElementType::Elevation,  TelemetryValueName::Altitude},
-        {ElementType::Distance,   TelemetryValueName::Distance}
+        {ElementType::Distance,   TelemetryValueName::Distance},
+        {ElementType::Gradient,      TelemetryValueName::Gradient}
     };
 
     auto it = map.find(type);
@@ -220,6 +225,16 @@ void TelemetryWidgetItem::onSampleChanged(const TelemetrySample& sample) {
             m_value = sample_value->value.toString();
             break;
     }
-    qDebug() << "widget updated " << m_value << " value";
+    //qDebug() << "widget updated " << m_value << " value";
     update();
+}
+
+QSizeF TelemetryWidgetItem::size() const {
+        return m_boundingRect.size();
+}
+
+void TelemetryWidgetItem::setSize(const QSizeF& size) {
+        prepareGeometryChange();
+        m_boundingRect.setSize(size);
+        update();
 }

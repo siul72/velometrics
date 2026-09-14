@@ -1,5 +1,6 @@
 #pragma once
 #include <qgraphicsitem.h>
+#include <QIcon>
 
 #include <QString>
 #include "../common/ElementDefinition.h"
@@ -27,6 +28,7 @@ public:
     bool showBackground = true;
 
     [[nodiscard]] QRectF boundingRect() const override;
+
     void paint(QPainter* painter,
                const QStyleOptionGraphicsItem*,
                QWidget*) override;
@@ -34,6 +36,8 @@ public:
 
 public slots:
         void onSampleChanged(const TelemetrySample& sample);
+    QSizeF size() const;
+    void setSize(const QSizeF& size);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -52,9 +56,7 @@ private:
     QPointF m_resizeStartPos;
     QSizeF m_resizeStartSize;
     bool m_resizing{};
-
-
-
+    QIcon m_icon;
 
 };
 

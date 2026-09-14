@@ -25,12 +25,7 @@ QToolBar("Main Toolbar", parent),  m_actionManager(action_manager){
     addSeparator();
     addAction(m_actionManager->render());
     connect(m_actionManager->loadTcx(), &QAction::triggered, this,  &MainToolBar::loadTcx);
-
-    connect(
-    m_actionManager->render(),
-    &QAction::triggered,
-    &VelometricsCore::instance(),
-    &VelometricsCore::render);
+    connect(m_actionManager->render(),&QAction::triggered,&VelometricsCore::instance(),&VelometricsCore::render);
 }
 
 void MainToolBar::loadTcx(){

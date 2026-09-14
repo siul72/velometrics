@@ -35,7 +35,7 @@ ExportRange TelemetryTrack::exportRange()
     return {};
 }
 
-const TelemetrySample* TelemetryTrack::sampleAt(const qint64 timestampMs) const
+TelemetrySample* TelemetryTrack::sampleAt(const qint64 timestampMs)
 {
     if (samples.isEmpty()) {
         return nullptr;

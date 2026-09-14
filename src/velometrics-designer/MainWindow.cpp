@@ -53,60 +53,46 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
     setWindowTitle("Velometrics");
     resize(1600, 1000);
 
-    connect(
-    m_actionManager->about(),
-    &QAction::triggered,
-    this,
-    &MainWindow::onAboutTriggered);
+    connect(m_actionManager->about(),&QAction::triggered,
+    this,&MainWindow::onAboutTriggered);
 
-    connect(
-    m_elementsDock,
-    &ElementsDock::elementRequested,
-    m_canvas,
-    &CanvasWidget::addElement);
+    connect(m_elementsDock,&ElementsDock::elementRequested,
+    m_canvas,&CanvasWidget::addElement);
 
     const auto& core = VelometricsCore::instance();
 
-    connect(&core,
-        &VelometricsCore::activityLoaded,
-        this,
-        &MainWindow::onActivityLoaded);
+    connect(&core,&VelometricsCore::activityLoaded,
+        this,&MainWindow::onActivityLoaded);
 
-    connect(&core,
-        &VelometricsCore::activityLoaded,
-        m_playbackWidget,
-        &PlayToolBar::onActivityLoaded);
+    connect(&core,&VelometricsCore::activityLoaded,
+        m_playbackWidget,&PlayToolBar::onActivityLoaded);
 
-    connect(m_playbackWidget,
-            &PlayToolBar::playRequested,
-            &core,
-            &VelometricsCore::play);
+    connect(m_playbackWidget,&PlayToolBar::playRequested,
+            &core,&VelometricsCore::play);
 
-    connect(m_playbackWidget,
-            &PlayToolBar::pauseRequested,
-            &core,
-            &VelometricsCore::pause);
+    connect(m_playbackWidget,&PlayToolBar::pauseRequested,
+            &core,&VelometricsCore::pause);
 
-    connect(m_playbackWidget,
-            &PlayToolBar::stopRequested,
-            &core,
-            &VelometricsCore::stop);
+    connect(m_playbackWidget,&PlayToolBar::stopRequested,
+            &core,&VelometricsCore::stop);
 
-    connect(m_playbackWidget,
-            &PlayToolBar::seekRequested,
-            &core,
-            &VelometricsCore::seek);
+    connect(m_playbackWidget,&PlayToolBar::seekRequested,
+            &core,&VelometricsCore::seek);
 
-    connect(&core,
-            &VelometricsCore::playbackPositionChanged,
-            m_playbackWidget,
-            &PlayToolBar::setPosition);
+    connect(&core,&VelometricsCore::playbackPositionChanged,
+            m_playbackWidget,&PlayToolBar::setPosition);
 
-    connect(&core,
-            &VelometricsCore::timestampChanged,
-            m_playbackWidget,
-            &PlayToolBar::setTimestamp);
+    connect(&core,&VelometricsCore::timestampChanged,
+            m_playbackWidget,&PlayToolBar::setTimestamp);
 
+    connect(m_actionManager->removeAction(), &QAction::triggered,
+        m_canvas->getScene(), &CanvasScene::removeSelectedItems);
+
+    connect(m_actionManager->alignTopAction(), &QAction::triggered,
+        m_canvas->getScene(), &CanvasScene::alignTop);
+
+    connect(m_actionManager->matchSizeAction(), &QAction::triggered,
+        m_canvas->getScene(), &CanvasScene::matchSize);
 }
 
 

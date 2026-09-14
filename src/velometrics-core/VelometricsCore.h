@@ -20,7 +20,7 @@ public:
         auto ret = Loader::load(fileName, m_activity);
         if (ret) {
             emit activityLoaded(m_activity.samples.count());
-            this->startTimer();
+
         }
         return ret;
     }
@@ -54,7 +54,7 @@ public:
 
 private:
     explicit VelometricsCore(QObject* parent = nullptr);
-    TcxLoader m_tcx_activity{};
+
     TelemetryTrack m_activity{};
     QTimer m_timer;
     qsizetype m_currentSampleIndex {0};

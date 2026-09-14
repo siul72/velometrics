@@ -36,11 +36,6 @@ void CanvasWidget::resizeEvent(
         m_scene->sceneRect(),
         Qt::KeepAspectRatio);
 }
-
-
-
-void CanvasWidget::addElement(const ElementType type) const
-{
+void CanvasWidget::addElement(const ElementType type) const{
     m_scene->addElement(type);
-
 }

@@ -13,5 +13,8 @@ class TcxLoader{
 public:
     static bool load(const QString& filename,  TelemetryTrack& track);
 
+private:
+    static void calculateDerivedMetrics(TelemetryTrack& track);
+
 };
 

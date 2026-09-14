@@ -24,6 +24,7 @@ struct GeoPoint
 
 Q_DECLARE_METATYPE(GeoPoint)
 
+
 enum class TelemetryValueName{
     Altitude,
     Speed,
@@ -31,7 +32,9 @@ enum class TelemetryValueName{
     Cadence,
     Power,
     Temperature,
-    GPS, Distance
+    GPS,
+    Distance,
+    Gradient
 };
 
 enum class TelemetryValueType

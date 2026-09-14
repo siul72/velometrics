@@ -1,9 +1,6 @@
-//
-// Created by jenkins on 8/23/26.
-//
+#pragma once
 
-#ifndef VELOMETRICS_COMMON_H
-#define VELOMETRICS_COMMON_H
+
 #include <QString>
 
 enum class ElementType
@@ -41,4 +38,3 @@ enum class ElementType
 QString elementTypeToString(ElementType type);
 ElementType stringToElementType(const QString& value);
 
-#endif //VELOMETRICS_COMMON_H

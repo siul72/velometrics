@@ -119,6 +119,21 @@ ActionManager::ActionManager(QObject* parent)
         this);
     m_showRulers->setCheckable(true);
 
+    m_removeAction = new QAction(
+    themedIcon("edit-delete", QStyle::SP_TrashIcon),
+    tr("Remove Selected"),
+    this);
+
+    m_alignTop = new QAction(
+        themedIcon("align-horizontal-top", QStyle::SP_ArrowUp),
+        tr("Align Top"),
+        this);
+
+    m_matchSizeAction = new QAction(
+        themedIcon("transform-scale", QStyle::SP_TitleBarMaxButton),
+        tr("Match Size"),
+        this);
+
     m_about = new QAction(
         themedIcon("help-about", QStyle::SP_MessageBoxInformation),
         tr("About Velometrics"),
@@ -212,6 +227,19 @@ QAction* ActionManager::showSafeArea() const
 QAction* ActionManager::showRulers() const
 {
     return m_showRulers;
+}
+
+QAction* ActionManager::removeAction() const {
+    return m_removeAction;
+}
+
+QAction* ActionManager::alignTopAction() const {
+    return m_alignTop;
+}
+
+QAction* ActionManager::matchSizeAction() const {
+
+    return m_matchSizeAction;
 }
 
 QAction* ActionManager::about() const

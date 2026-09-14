@@ -65,6 +65,10 @@ VelometricsMenuBar::VelometricsMenuBar(ActionManager* actions, QWidget* parent):
     toolsMenu->addAction( "Align Top");
     toolsMenu->addAction( "Align Bottom");
 
+    auto* elementMenu =  addMenu("&Elements");
+    elementMenu->addAction(m_actions->removeAction());
+    elementMenu->addAction(m_actions->alignTopAction());
+    elementMenu->addAction(m_actions->matchSizeAction());
     //
     // Help
     //

@@ -45,7 +45,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 add_subdirectory(tests)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg  )
 find_package(yaml-cpp REQUIRED)
 
 find_package(PkgConfig REQUIRED)
@@ -95,10 +95,13 @@ add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-designer/RangeSlider/RangeSlider.cpp
         src/velometrics-designer/RangeSlider/RangeSlider.h
         src/velometrics-core/Rendering/VideoRenderService.cpp
-        src/velometrics-core/Rendering/VideoRenderService.h)
+        src/velometrics-core/Rendering/VideoRenderService.h
+        src/velometrics-core/Templates/TemplateManager.cpp
+        src/velometrics-core/Templates/TemplateManager.h)
 
-target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets yaml-cpp
+target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg   yaml-cpp
         ${AVCODEC_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWSCALE_LIBRARIES} )
+
 install(TARGETS velometrics RUNTIME DESTINATION bin)
 install(FILES resources/velometrics-config.yaml DESTINATION share/velometrics)
 
@@ -111,4 +114,16 @@ target_include_directories(
 target_link_libraries(
         velometrics PRIVATE
         ${FFMPEG_LIBRARIES}
+)
+
+
+file(GLOB_RECURSE TEMPLATE_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/templates/*.svg"
+)
+
+qt_add_resources(velometrics
+        "template_icons"
+        PREFIX "/templates"
+        BASE ${CMAKE_CURRENT_SOURCE_DIR}/resources/templates
+        FILES ${TEMPLATE_FILES}
 )

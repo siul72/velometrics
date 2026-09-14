@@ -1,6 +1,4 @@
-//
-// Created by jenkins on 8/23/26.
-//
+
 #include "ElementType.h"
 
 #include <QString>
@@ -13,7 +11,7 @@ QString elementTypeToString(const ElementType type)
         return "Speed";
 
     case ElementType::HeartRate:
-        return "Heart Rate";
+        return "HeartRate";
 
     case ElementType::Power:
         return "Power";
@@ -46,7 +44,7 @@ ElementType stringToElementType(const QString& value)
     if (value == "Speed")
         return ElementType::Speed;
 
-    if (value == "Heart Rate")
+    if (value == "HeartRate")
         return ElementType::HeartRate;
 
     if (value == "Power")
