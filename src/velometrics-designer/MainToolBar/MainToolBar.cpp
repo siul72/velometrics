@@ -18,8 +18,8 @@ QToolBar("Main Toolbar", parent),  m_actionManager(action_manager){
     setFloatable(false);
     setIconSize(QSize(24, 24));
     setToolButtonStyle(Qt::ToolButtonIconOnly);
-    addAction(m_actionManager->openProject());
-    addAction(m_actionManager->saveProject());
+    addAction(m_actionManager->loadTemplate());
+    addAction(m_actionManager->saveTemplate());
     addSeparator();
     addAction(m_actionManager->loadTcx());
     addSeparator();

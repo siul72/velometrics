@@ -24,6 +24,8 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget* parent = nullptr);
+    void onSaveTemplate();
+    void onLoadTemplate();
 
 public slots:
     void onAboutTriggered();

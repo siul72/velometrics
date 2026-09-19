@@ -33,11 +33,15 @@ public:
                const QStyleOptionGraphicsItem*,
                QWidget*) override;
     [[nodiscard]] QRectF resizeHandle() const;
+    [[nodiscard]] QString elementType() const;
+    [[nodiscard]] QColor backgroundColor() const;
 
 public slots:
-        void onSampleChanged(const TelemetrySample& sample);
-    QSizeF size() const;
+    void onSampleChanged(const TelemetrySample& sample);
+    [[nodiscard]] QSizeF size() const;
     void setSize(const QSizeF& size);
+    void serialize(QDataStream& stream) const;
+    void deserialize(QDataStream& stream);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

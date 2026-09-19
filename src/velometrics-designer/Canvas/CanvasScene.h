@@ -11,15 +11,15 @@ public:
     explicit CanvasScene(QObject* parent = nullptr);
     void addElement(ElementType element);
     void setHelpersVisible(bool visible);
-
     VelometricsConfiguration m_config{};
     QImage renderFrame( const QSize& outputSize, const QColor& background = Qt::black);
+
 public slots:
     void removeSelectedItems();
     void keyPressEvent(QKeyEvent* event) override;
     void alignTop() const;
     void matchSize() const;
-    void distributeHorizontally();
+    void distributeHorizontally() const;
 
 private:
     QGraphicsRectItem* m_border = nullptr;

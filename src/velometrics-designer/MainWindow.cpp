@@ -13,6 +13,7 @@
 #include <QStatusBar>
 #include  <QFileDialog>
 #include <QSlider>
+#include <QInputDialog>
 
 #include "Canvas/CanvasWidget.h"
 #include "ElementsDock/ElementsDock.h"
@@ -21,6 +22,8 @@
 #include "ActionManager/ActionManager.h"
 #include "VelometricsMenuBar/VelometricsMenuBar.h"
 #include "../velometrics-core/VelometricsCore.h"
+#include "../velometrics-core/Templates/CanvasTemplateManager.h"
+#include "TemplateManagement/TemplateDialog.h"
 
 MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
 
@@ -93,6 +96,51 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
 
     connect(m_actionManager->matchSizeAction(), &QAction::triggered,
         m_canvas->getScene(), &CanvasScene::matchSize);
+
+    connect(m_actionManager->horizontalDistributionAction(), &QAction::triggered,
+        m_canvas->getScene(), &CanvasScene::distributeHorizontally);
+
+    connect(m_actionManager->saveTemplate(), &QAction::triggered,
+        this, &MainWindow::onSaveTemplate);
+
+    connect(m_actionManager->loadTemplate(), &QAction::triggered,
+        this, &MainWindow::onLoadTemplate);
+}
+
+void MainWindow::onSaveTemplate(){
+    const QString defaultName =
+        QString("template_%1")
+            .arg(QDateTime::currentDateTime()
+                     .toString("yyyyMMdd_hhmmss"));
+
+    bool ok = false;
+
+    const QString name =
+        QInputDialog::getText(
+            this,
+            tr("Save Template"),
+            tr("Template name:"),
+            QLineEdit::Normal,
+            defaultName,
+            &ok);
+
+    if (!ok || name.isEmpty())
+        return;
+
+    CanvasTemplateManager::instance().saveTemplate(m_canvas->getScene(), name);
+}
+
+void MainWindow::onLoadTemplate(){
+
+    TemplateDialog dialog(&CanvasTemplateManager::instance(), static_cast<CanvasScene*>(m_canvas->getScene()), this);
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    if (const QString templateName = dialog.selectedTemplate(); !templateName.isEmpty()) {
+        auto ret = CanvasTemplateManager::instance().loadTemplate(m_canvas->getScene(), templateName);
+    }
 }
 
 

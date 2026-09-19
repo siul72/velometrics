@@ -96,8 +96,12 @@ add_executable(velometrics src/velometrics-designer/main.cpp
         src/velometrics-designer/RangeSlider/RangeSlider.h
         src/velometrics-core/Rendering/VideoRenderService.cpp
         src/velometrics-core/Rendering/VideoRenderService.h
-        src/velometrics-core/Templates/TemplateManager.cpp
-        src/velometrics-core/Templates/TemplateManager.h)
+        src/velometrics-designer/TemplateManagement/TemplateDialog.cpp
+        src/velometrics-designer/TemplateManagement/TemplateDialog.h
+        src/velometrics-core/Templates/CanvasTemplateManager.cpp
+        src/velometrics-core/Templates/CanvasTemplateManager.h
+        src/velometrics-core/Templates/ThemeTemplateManager.cpp
+        src/velometrics-core/Templates/ThemeTemplateManager.h)
 
 target_link_libraries(velometrics PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg   yaml-cpp
         ${AVCODEC_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWSCALE_LIBRARIES} )

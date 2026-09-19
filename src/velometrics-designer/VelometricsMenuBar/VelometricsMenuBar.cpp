@@ -11,12 +11,8 @@ VelometricsMenuBar::VelometricsMenuBar(ActionManager* actions, QWidget* parent):
 
 
     auto* fileMenu =  addMenu("&File");
-    fileMenu->addAction(m_actions->newTemplate());
-    fileMenu->addAction( m_actions->openTemplate());
-    fileMenu->addSeparator();
+    fileMenu->addAction(m_actions->loadTemplate());
     fileMenu->addAction( m_actions->saveTemplate());
-    fileMenu->addAction( m_actions->saveAsTemplate());
-    fileMenu->addSeparator();
     fileMenu->addAction(m_actions->exit());
 
     //
@@ -69,6 +65,7 @@ VelometricsMenuBar::VelometricsMenuBar(ActionManager* actions, QWidget* parent):
     elementMenu->addAction(m_actions->removeAction());
     elementMenu->addAction(m_actions->alignTopAction());
     elementMenu->addAction(m_actions->matchSizeAction());
+    elementMenu->addAction(m_actions->horizontalDistributionAction());
     //
     // Help
     //

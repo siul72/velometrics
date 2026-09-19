@@ -17,9 +17,16 @@ static QIcon themedIcon(const QString& themeName,
 }
 
 
-ActionManager::ActionManager(QObject* parent)
-    : QObject(parent)
-{ 
+ActionManager::ActionManager(QObject* parent) : QObject(parent){
+    m_saveTemplate = new QAction(
+    themedIcon("document-save", QStyle::SP_DialogSaveButton),
+    tr("Save Template"),
+    this);
+
+    m_loadTemplate = new QAction(
+        themedIcon("document-open", QStyle::SP_DialogOpenButton),
+        tr("Load Template"),
+        this);
 
     m_openProject = new QAction(
         themedIcon("document-open", QStyle::SP_DialogOpenButton),
@@ -36,28 +43,7 @@ ActionManager::ActionManager(QObject* parent)
         tr("Render"),
         this);
 
-    m_newTemplate = new QAction(
-        themedIcon("document-new", QStyle::SP_FileIcon),
-        tr("New Template"),
-        this);
-    m_newTemplate->setShortcut(QKeySequence::New);
 
-    m_openTemplate = new QAction(
-        themedIcon("document-open", QStyle::SP_DialogOpenButton),
-        tr("Open Template..."),
-        this);
-    m_openTemplate->setShortcut(QKeySequence::Open);
-
-    m_saveTemplate = new QAction(
-        themedIcon("document-save", QStyle::SP_DialogSaveButton),
-        tr("Save"),
-        this);
-    m_saveTemplate->setShortcut(QKeySequence::Save);
-
-    m_saveAsTemplate = new QAction(
-        themedIcon("document-save-as", QStyle::SP_DialogSaveButton),
-        tr("Save As..."),
-        this);
 
     m_loadFit = new QAction(
         themedIcon("document-import", QStyle::SP_DriveHDIcon),
@@ -134,6 +120,12 @@ ActionManager::ActionManager(QObject* parent)
         tr("Match Size"),
         this);
 
+    m_distributeHorizontal = new QAction(
+    themedIcon("distribute-horizontal",
+               QStyle::SP_ArrowRight),
+    tr("Distribute Horizontally"),
+    this);
+
     m_about = new QAction(
         themedIcon("help-about", QStyle::SP_MessageBoxInformation),
         tr("About Velometrics"),
@@ -162,20 +154,12 @@ QAction* ActionManager::render() const
     return m_render;
 }
 
-QAction* ActionManager::newTemplate() const {
-    return m_newTemplate;
-}
-
-QAction* ActionManager::openTemplate() const {
-    return m_openTemplate;
+QAction* ActionManager::loadTemplate() const {
+    return m_loadTemplate;
 }
 
 QAction* ActionManager::saveTemplate() const {
     return m_saveTemplate;
-}
-
-QAction* ActionManager::saveAsTemplate() const {
-    return m_saveAsTemplate;
 }
 
 QAction* ActionManager::loadFit() const {
@@ -240,6 +224,10 @@ QAction* ActionManager::alignTopAction() const {
 QAction* ActionManager::matchSizeAction() const {
 
     return m_matchSizeAction;
+}
+
+QAction* ActionManager::horizontalDistributionAction() const{
+    return m_distributeHorizontal;
 }
 
 QAction* ActionManager::about() const

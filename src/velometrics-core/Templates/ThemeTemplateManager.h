@@ -3,12 +3,12 @@
 #include <QString>
 
 
-class TemplateManager : public QObject
+class ThemeTemplateManager : public QObject
 {
     Q_OBJECT
 
 public:
-    static TemplateManager& instance();
+    static ThemeTemplateManager& instance();
 
     [[nodiscard]] QString currentTemplate() const;
     void setCurrentTemplate(const QString& name);
@@ -18,3 +18,4 @@ public:
 private:
     QString m_currentTemplate = "default";
 };
+

@@ -1,25 +1,24 @@
-
-#include "TemplateManager.h"
+#include "ThemeTemplateManager.h"
 
 #include <qfile.h>
 #include <QIcon>
 
-TemplateManager& TemplateManager::instance()
+ThemeTemplateManager& ThemeTemplateManager::instance()
 {
-    static TemplateManager instance;
+    static ThemeTemplateManager instance;
     return instance;
 }
 
-QString TemplateManager::currentTemplate() const{
+QString ThemeTemplateManager::currentTemplate() const{
     return m_currentTemplate;
 }
 
-void TemplateManager::setCurrentTemplate(const QString& name){
+void ThemeTemplateManager::setCurrentTemplate(const QString& name){
 
     m_currentTemplate = name;
 }
 
-QIcon TemplateManager::icon(const QString& iconId) const {
+QIcon ThemeTemplateManager::icon(const QString& iconId) const {
     QString path = QString(":/templates/%1/%2.svg").arg(m_currentTemplate, iconId);
 
     if (QFile::exists(path))

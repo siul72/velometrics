@@ -11,7 +11,7 @@
 #include "../common/VeloMetricsConfig.h"
 #include "../../velometrics-core/Metrics/TelemetrySample.h"
 #include  "../../velometrics-core/VelometricsCore.h"
-#include "../../velometrics-core/Templates/TemplateManager.h"
+#include "../../velometrics-core/Templates/ThemeTemplateManager.h"
 
 TelemetryWidgetItem::TelemetryWidgetItem(ElementDefinition  definition, QGraphicsItem* parent) :
 QGraphicsObject(parent),  m_definition(std::move(definition)){
@@ -20,7 +20,7 @@ QGraphicsObject(parent),  m_definition(std::move(definition)){
     setAcceptedMouseButtons(Qt::LeftButton);
     setAcceptHoverEvents(true);
     m_boundingRect = QRectF(0, 0, m_size.width(), m_size.height());
-    m_icon = TemplateManager::instance().icon(elementTypeToString(definition.type));
+    m_icon = ThemeTemplateManager::instance().icon(elementTypeToString(definition.type));
     connect(&VelometricsCore::instance(), &VelometricsCore::sampleChanged,
             this, &TelemetryWidgetItem::onSampleChanged);
 
@@ -111,6 +111,14 @@ QRectF TelemetryWidgetItem::resizeHandle() const
         m_size.height() - 40,
         40,
         40};
+}
+
+QString TelemetryWidgetItem::elementType() const {
+    return elementTypeToString(m_definition.type);
+}
+
+QColor TelemetryWidgetItem::backgroundColor() const {
+    return m_backgroundColor;
 }
 
 
@@ -238,3 +246,33 @@ void TelemetryWidgetItem::setSize(const QSizeF& size) {
         m_boundingRect.setSize(size);
         update();
 }
+
+void TelemetryWidgetItem::serialize(QDataStream& stream) const {
+    stream << static_cast<qint32>(m_definition.type);
+    stream << pos();
+    stream << m_size;
+    stream << m_backgroundColor;
+    stream << m_value;
+    stream << showLabel;
+    stream << showBackground;
+}
+
+void TelemetryWidgetItem::deserialize(QDataStream& stream) {
+    QPointF position;
+
+    stream >> position;
+    stream >> m_size;
+    stream >> m_backgroundColor;
+    stream >> m_value;
+    stream >> showLabel;
+    stream >> showBackground;
+
+    setPos(position);
+
+    m_boundingRect = QRectF(
+        QPointF(0, 0),
+        m_size);
+
+    update();
+}
+

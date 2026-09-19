@@ -1,11 +1,8 @@
 #pragma once
 
 #include <QObject>
-
 class QAction;
-
-class ActionManager : public QObject
-{
+class ActionManager : public QObject {
     Q_OBJECT
 
 public:
@@ -15,10 +12,9 @@ public:
     [[nodiscard]] QAction* saveProject() const;
     [[nodiscard]] QAction* render() const;
 
-    [[nodiscard]] QAction* newTemplate() const;
-    [[nodiscard]] QAction* openTemplate() const;
+    [[nodiscard]] QAction* loadTemplate() const;
     [[nodiscard]] QAction* saveTemplate() const;
-    [[nodiscard]] QAction* saveAsTemplate() const;
+
 
     [[nodiscard]] QAction* loadFit() const;
     [[nodiscard]] QAction* loadGpx() const;
@@ -37,16 +33,16 @@ public:
     [[nodiscard]] QAction* removeAction() const;
     [[nodiscard]] QAction* alignTopAction() const;
     [[nodiscard]] QAction* matchSizeAction() const;
+    [[nodiscard]] QAction* horizontalDistributionAction() const;
 
     [[nodiscard]] QAction* about() const;
     [[nodiscard]] QAction* exit() const;
 
 
 private:
-    QAction* m_newTemplate;
-    QAction* m_openTemplate;
+
     QAction* m_saveTemplate;
-    QAction* m_saveAsTemplate;
+    QAction* m_loadTemplate;
 
     QAction* m_loadFit;
     QAction* m_loadGpx;
@@ -70,4 +66,5 @@ private:
     QAction* m_removeAction;
     QAction* m_alignTop;
     QAction* m_matchSizeAction;
+    QAction* m_distributeHorizontal;
 };

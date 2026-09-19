@@ -7,6 +7,7 @@ struct VelometricsConfiguration
      // Canvas
      int canvasWidth = 3840;
      int canvasHeight = 2160;
+    QColor canvasBackgroundColor = Qt::white;
 
      // Grid
      bool showGrid = true;

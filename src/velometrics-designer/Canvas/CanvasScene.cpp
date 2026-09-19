@@ -1,7 +1,13 @@
 #include "CanvasScene.h"
+
+#include <qfile.h>
 #include <QGraphicsTextItem>
 #include <QPainter>
 #include <QKeyEvent>
+
+#include <QDir>
+#include <QStandardPaths>
+
 
 #include "../common/ElementDefinition.h"
 #include "../Elements/TelemetryWidgetItem.h"
@@ -10,7 +16,7 @@ CanvasScene::CanvasScene(QObject* parent): QGraphicsScene(parent){
 
     m_config = VelometricsSettings::instance();
     setSceneRect(0.0,0.0,m_config.canvasWidth,m_config.canvasHeight);
-    setBackgroundBrush(Qt::white);
+    setBackgroundBrush(m_config.canvasBackgroundColor);
     //grid
     m_border = addRect(sceneRect(), QPen(Qt::black, 2));
     QPen gridPen(QColor(225, 225, 225));
@@ -48,6 +54,7 @@ QImage CanvasScene::renderFrame( const QSize& outputSize, const QColor& backgrou
 
     return image;
 }
+
 
 void CanvasScene::setHelpersVisible(const bool visible){
     if (m_border)
@@ -110,7 +117,8 @@ void CanvasScene::matchSize() const {
     }
 }
 
-void CanvasScene::distributeHorizontally() {
+void CanvasScene::distributeHorizontally() const
+{
     auto items = selectedItems();
 
     if (items.size() < 3)
@@ -127,17 +135,10 @@ void CanvasScene::distributeHorizontally() {
     for (const auto* item : items)
         totalWidth += item->sceneBoundingRect().width();
 
-    const qreal left =
-        items.first()->sceneBoundingRect().left();
-
-    const qreal right =
-        items.last()->sceneBoundingRect().right();
-
-    const qreal freeSpace =
-        right - left - totalWidth;
-
-    const qreal gap =
-        freeSpace / (items.size() - 1);
+    const qreal left = items.first()->sceneBoundingRect().left();
+    const qreal right = items.last()->sceneBoundingRect().right();
+    const qreal freeSpace = right - left - totalWidth;
+    const qreal gap = freeSpace / (items.size() - 1);
 
     qreal currentX = left;
 
@@ -152,6 +153,7 @@ void CanvasScene::distributeHorizontally() {
         currentX += rect.width() + gap;
     }
 }
+
 
 
 
