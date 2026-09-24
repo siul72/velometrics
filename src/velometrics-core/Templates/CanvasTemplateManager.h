@@ -17,7 +17,7 @@ public:
     CanvasTemplateManager& operator=(const CanvasTemplateManager&) = delete;
 
     QString templateDirectory();
-    QString saveTemplate(CanvasScene* scene, const QString& name) const;
+    QString saveTemplate(CanvasScene* scene, const QString& name);
     [[nodiscard]] bool loadTemplate(CanvasScene* scene, const QString& name) const;
     [[nodiscard]] QStringList availableTemplates();
     void invalidateCache();

@@ -6,21 +6,13 @@
 enum class ElementType
 {
     // Telemetry
-    Speed,
+    Cadence,
+    Distance,
+    Elevation,
+    Gradient,
     HeartRate,
     Power,
-    Cadence,
-    Gradient,
-    Elevation,
-    Distance,
-
-    // Graphics
-    Label,
-    Text,
-    Icon,
-    Image,
-    Rectangle,
-    Circle,
+    Speed,
 
     // Maps
     MiniMap,

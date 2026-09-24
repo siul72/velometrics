@@ -22,16 +22,14 @@ class TelemetryWidgetItem : public QGraphicsObject {
     Q_OBJECT
 
 public:
-    explicit TelemetryWidgetItem(ElementDefinition  definition, QGraphicsItem *parent = nullptr);
+    explicit TelemetryWidgetItem(ElementDefinition  definition, QGraphicsObject *parent = nullptr);
 
     bool showLabel = true;
     bool showBackground = true;
 
     [[nodiscard]] QRectF boundingRect() const override;
 
-    void paint(QPainter* painter,
-               const QStyleOptionGraphicsItem*,
-               QWidget*) override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) override;
     [[nodiscard]] QRectF resizeHandle() const;
     [[nodiscard]] QString elementType() const;
     [[nodiscard]] QColor backgroundColor() const;
@@ -42,6 +40,11 @@ public slots:
     void setSize(const QSizeF& size);
     void serialize(QDataStream& stream) const;
     void deserialize(QDataStream& stream);
+    void setBackgroundColor(const QColor& color);
+    bool labelVisible() const;
+    void setLabelVisible(bool visible);
+    bool backgroundVisible() const;
+    void setBackgroundVisible(bool visible);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

@@ -12,6 +12,7 @@
 #include  <QLabel>
 #include <QStatusBar>
 #include  <QFileDialog>
+#include <qgraphicsitem.h>
 #include <QSlider>
 #include <QInputDialog>
 
@@ -24,6 +25,7 @@
 #include "../velometrics-core/VelometricsCore.h"
 #include "../velometrics-core/Templates/CanvasTemplateManager.h"
 #include "TemplateManagement/TemplateDialog.h"
+#include "Elements/TelemetryWidgetItem.h"
 
 MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
 
@@ -105,6 +107,19 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
 
     connect(m_actionManager->loadTemplate(), &QAction::triggered,
         this, &MainWindow::onLoadTemplate);
+
+    connect(m_canvas->scene(),&QGraphicsScene::selectionChanged,this,
+     [this](){
+         const auto items = m_canvas->scene()->selectedItems();
+         if (items.isEmpty()){
+             m_propertiesDock->clearProperties();
+             return;
+         }
+
+         if (auto* telemetry = qgraphicsitem_cast<TelemetryWidgetItem*>(items.first())){
+             m_propertiesDock->loadProperties(telemetry);
+         }
+        });
 }
 
 void MainWindow::onSaveTemplate(){

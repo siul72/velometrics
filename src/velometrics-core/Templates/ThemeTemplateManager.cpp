@@ -19,9 +19,7 @@ void ThemeTemplateManager::setCurrentTemplate(const QString& name){
 }
 
 QIcon ThemeTemplateManager::icon(const QString& iconId) const {
-    QString path = QString(":/templates/%1/%2.svg").arg(m_currentTemplate, iconId);
-
-    if (QFile::exists(path))
+    if (const QString path = QString(":/templates/%1/%2.svg").arg(m_currentTemplate, iconId); QFile::exists(path))
         return QIcon(path);
 
     return QIcon(QString(":/templates/default/%1.svg")

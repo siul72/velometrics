@@ -13,7 +13,7 @@
 #include  "../../velometrics-core/VelometricsCore.h"
 #include "../../velometrics-core/Templates/ThemeTemplateManager.h"
 
-TelemetryWidgetItem::TelemetryWidgetItem(ElementDefinition  definition, QGraphicsItem* parent) :
+TelemetryWidgetItem::TelemetryWidgetItem(ElementDefinition  definition, QGraphicsObject* parent) :
 QGraphicsObject(parent),  m_definition(std::move(definition)){
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -21,9 +21,17 @@ QGraphicsObject(parent),  m_definition(std::move(definition)){
     setAcceptHoverEvents(true);
     m_boundingRect = QRectF(0, 0, m_size.width(), m_size.height());
     m_icon = ThemeTemplateManager::instance().icon(elementTypeToString(definition.type));
+    auto size = QSize(256, 256);
+    QPixmap pix = m_icon.pixmap(size);
+    QString filename = QString("/tmp/%1_%2x%3.png")
+                           .arg(elementTypeToString(definition.type))
+                           .arg(size.width())
+                           .arg(size.height());
+    auto ret = pix.save(filename);
+
+
     connect(&VelometricsCore::instance(), &VelometricsCore::sampleChanged,
             this, &TelemetryWidgetItem::onSampleChanged);
-
 
 }
 
@@ -48,37 +56,30 @@ void TelemetryWidgetItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
         icon_size = qRound(0.8 * qMin(m_boundingRect.width()-elements_margin,m_boundingRect.height()-elements_margin));
         const QRect iconRect(elements_margin, elements_margin, icon_size, icon_size);
         m_icon.paint(painter, iconRect);
+
     }
 
     const int valueFontSize = std::max(12, static_cast<int>(m_boundingRect.height() * 0.30));
     const int unitFontSize = std::max(8, static_cast<int>(valueFontSize * 0.45));
-
     QFont valueFont;
     valueFont.setBold(true);
     valueFont.setPixelSize(valueFontSize);
-
     QFont unitFont;
     unitFont.setPixelSize(unitFontSize);
     const QFontMetrics valueFm(valueFont);
     const QFontMetrics unitFm(unitFont);
-
     const QString value = m_value;
     const QString units = m_definition.defaultUnits;
-
     const int valueWidth = valueFm.horizontalAdvance(value);
     const int unitWidth  = unitFm.horizontalAdvance(units);
-
     const int spacing = valueFontSize / 5;
     const int totalWidth = valueWidth + spacing + unitWidth;
-
     const double x = icon_size/0.8 + elements_margin + spacing;
     painter->setPen(Qt::white);
-
     // Draw value
     painter->setFont(valueFont);
     const QRectF valueRect(x,0,valueWidth,m_boundingRect.height());
     painter->drawText(valueRect, Qt::AlignVCenter | Qt::AlignRight,value);
-
     // Draw units
     painter->setFont(unitFont);
     const QRectF unitRect(x + valueWidth + unitWidth,0,unitWidth,m_boundingRect.height());
@@ -88,24 +89,17 @@ void TelemetryWidgetItem::paint(QPainter* painter, const QStyleOptionGraphicsIte
         painter->save();
         painter->setBrush(Qt::NoBrush);
         painter->setPen(QPen(Qt::black, 2, Qt::DashLine));
-
         // Slightly inset the border
         const QRectF borderRect = boundingRect().adjusted(1, 1, -1, -1);
         painter->drawRect(borderRect);
-
         painter->setBrush(Qt::white);
         painter->setPen(QPen(Qt::cyan, 2));
         painter->drawRect(resizeHandle());
-
         painter->restore();
     }
-
-
-
 }
 
-QRectF TelemetryWidgetItem::resizeHandle() const
-{
+QRectF TelemetryWidgetItem::resizeHandle() const {
     return {
         m_size.width() - 40,
         m_size.height() - 40,
@@ -120,7 +114,6 @@ QString TelemetryWidgetItem::elementType() const {
 QColor TelemetryWidgetItem::backgroundColor() const {
     return m_backgroundColor;
 }
-
 
 void TelemetryWidgetItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event){
     m_resizing = false;
@@ -183,8 +176,7 @@ QVariant TelemetryWidgetItem::itemChange(const GraphicsItemChange change, const 
     qDebug() << "Item change" << QString(value.toString());
     if (change == ItemPositionChange)
     {
-        const auto& cfg = VelometricsSettings::instance();
-        if (cfg.snapToGrid)
+        if (const auto& cfg = VelometricsSettings::instance(); cfg.snapToGrid)
         {
             QPointF pos = value.toPointF();
             pos.setX(snapToGrid(pos.x()));
@@ -208,7 +200,7 @@ const TelemetryValueName* telemetryValueNameFromElementType(ElementType type)
         {ElementType::Gradient,      TelemetryValueName::Gradient}
     };
 
-    auto it = map.find(type);
+    const auto it = map.find(type);
     return it != map.end() ? &it.value() : nullptr;
 }
 
@@ -273,6 +265,29 @@ void TelemetryWidgetItem::deserialize(QDataStream& stream) {
         QPointF(0, 0),
         m_size);
 
+    update();
+}
+
+void TelemetryWidgetItem::setBackgroundColor(const QColor& color) {
+    m_backgroundColor = color;
+    update();
+}
+
+bool TelemetryWidgetItem::labelVisible() const {
+    return showLabel;
+}
+
+void TelemetryWidgetItem::setLabelVisible(const bool visible){
+    showLabel = visible;
+    update();
+}
+
+bool TelemetryWidgetItem::backgroundVisible() const{
+    return showBackground;
+}
+
+void TelemetryWidgetItem::setBackgroundVisible(const bool visible) {
+    showBackground = visible;
     update();
 }
 

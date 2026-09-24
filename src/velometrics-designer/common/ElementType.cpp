@@ -25,14 +25,10 @@ QString elementTypeToString(const ElementType type)
     case ElementType::Elevation:
         return "Elevation";
 
-    case ElementType::Text:
-        return "Text";
+    case ElementType::Gradient:
+        return "Gradient";
 
-    case ElementType::Image:
-        return "Image";
 
-    case ElementType::Rectangle:
-        return "Rectangle";
 
     default:
         return "Unknown";
@@ -59,14 +55,9 @@ ElementType stringToElementType(const QString& value)
     if (value == "Elevation")
         return ElementType::Elevation;
 
-    if (value == "Text")
-        return ElementType::Text;
+    if (value == "Gradient")
+        return ElementType::Gradient;
 
-    if (value == "Image")
-        return ElementType::Image;
-
-    if (value == "Rectangle")
-        return ElementType::Rectangle;
 
     return ElementType::Unknown;
 }

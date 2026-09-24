@@ -3,6 +3,8 @@
 #include <QDockWidget>
 
 class QTreeWidget;
+class QTreeWidgetItem;
+class TelemetryWidgetItem;
 
 class PropertiesDock : public QDockWidget
 {
@@ -12,15 +14,17 @@ public:
     explicit PropertiesDock(QWidget* parent = nullptr);
 
     void clearProperties();
-    void loadProperties(
-        const QString& name,
-        int x,
-        int y,
-        int width,
-        int height);
+    void loadProperties(TelemetryWidgetItem* item);
+
+    signals:
+        void propertyChanged();
+
+private slots:
+    void onItemChanged(const QTreeWidgetItem* item, int column);
 
 private:
-    QTreeWidget* m_propertyTree;
+    QTreeWidget* m_propertyTree{};
+    TelemetryWidgetItem* m_currentItem{};
+    bool m_updatingTree = false;
 };
-
 

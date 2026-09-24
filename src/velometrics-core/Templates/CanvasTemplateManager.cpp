@@ -39,7 +39,7 @@ QString CanvasTemplateManager::templateDirectory() {
 }
 
 
-QString CanvasTemplateManager::saveTemplate(CanvasScene* scene, const QString& name) const
+QString CanvasTemplateManager::saveTemplate(CanvasScene* scene, const QString& name)
 {
 
     QString templateName = name;
@@ -53,12 +53,12 @@ QString CanvasTemplateManager::saveTemplate(CanvasScene* scene, const QString& n
         return {};
 
     QDataStream stream(&file);
-    stream << static_cast<quint32>(1);
+    stream << static_cast<quint64>(1);
     qDebug() << "1 File position save:" << file.pos();
     stream << scene->sceneRect().size();
     qDebug() << "2 File position save:" << file.pos();
-    //stream << scene->m_config.canvasBackgroundColor;
-    //qDebug() << "3 File position save:" << file.pos();
+    stream << scene->m_config.canvasBackgroundColor;
+    qDebug() << "3 File position save:" << file.pos();
     QVector<TelemetryWidgetItem*> widgets;
 
     for (auto* item : scene->items()){
@@ -67,7 +67,7 @@ QString CanvasTemplateManager::saveTemplate(CanvasScene* scene, const QString& n
         }
     }
 
-    stream << widgets.size();
+    stream << static_cast<quint64>(widgets.size());
     qDebug() << "4 File position save:" << file.pos();
     for (const auto* widget : widgets){
         widget->serialize(stream);
@@ -75,7 +75,7 @@ QString CanvasTemplateManager::saveTemplate(CanvasScene* scene, const QString& n
 
     auto ret = scene->renderFrame(QSize(320, 180),scene->m_config.canvasBackgroundColor)
     .save(QDir(m_template_directory).filePath(templateName + ".png"));
-
+    m_templates.append(templateName);
     return templateName;
 }
 
@@ -85,16 +85,17 @@ bool CanvasTemplateManager::loadTemplate(CanvasScene* scene, const QString& name
     if (!file.open(QIODevice::ReadOnly))
         return false;
     QDataStream stream(&file);
-    quint32 version;
+    quint64 version;
     QSizeF canvasSize;
     QColor canvasBackgroundColor;
-    int widgetCount;
+    quint64 widgetCount;
+
     stream >> version;
     qDebug() << "1 File position load:" << file.pos();
     stream >> canvasSize;
     qDebug() << "2 File position load:" << file.pos();
-    //stream >> canvasBackgroundColor;
-    //qDebug() << "3 File position load:" << file.pos();
+    stream >> canvasBackgroundColor;
+    qDebug() << "3 File position load:" << file.pos();
     stream >> widgetCount;
     qDebug() << "4 File position load:" << file.pos();
     scene->clear();

@@ -4,7 +4,8 @@
 #include <QGraphicsTextItem>
 #include <QPainter>
 #include <QKeyEvent>
-
+#include  <QGraphicsSceneMouseEvent>
+#include  <QFileDialog>
 #include <QDir>
 #include <QStandardPaths>
 
@@ -153,6 +154,41 @@ void CanvasScene::distributeHorizontally() const
         currentX += rect.width() + gap;
     }
 }
+
+void CanvasScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event){
+    // Ignore*double-clicks on widgets/items
+    if (items(event->scenePos()).isEmpty()){
+         QGraphicsScene::mouseDoubleClickEvent(event);
+         return;
+     }
+
+    const QString fileName =
+          QFileDialog::getOpenFileName(
+            nullptr,
+              tr("Select Background Image"),
+             QString(),
+              tr("Images *.png *.jpg *.jpeg *.bmp *.gif)"));
+
+      if (!fileName.isEmpty()){
+          m_backgroundImage.load(fileName);
+          update();
+      }
+
+     QGraphicsScene::mouseDoubleClickEvent(event);
+}
+
+void CanvasScene::drawBackground(QPainter* painter,const QRectF& rect){
+    QGraphicsScene::drawBackground(painter, rect);
+
+    if (!m_backgroundImage.isNull())
+    {
+        painter->drawPixmap(
+            sceneRect().toRect(),
+            m_backgroundImage,
+            m_backgroundImage.rect());
+    }
+}
+
 
 
 

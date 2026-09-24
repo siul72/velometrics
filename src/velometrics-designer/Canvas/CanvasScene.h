@@ -20,10 +20,14 @@ public slots:
     void alignTop() const;
     void matchSize() const;
     void distributeHorizontally() const;
+protected:
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
+    void drawBackground(QPainter* painter, const QRectF& rect) override;
 
 private:
     QGraphicsRectItem* m_border = nullptr;
     QList<QGraphicsLineItem*> m_gridLines;
+    QPixmap m_backgroundImage;
 
 };
 

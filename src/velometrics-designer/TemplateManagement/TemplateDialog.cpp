@@ -154,10 +154,9 @@ void TemplateDialog::switchToListView() const
 
 
 void TemplateDialog::loadSelectedTemplate(){
-    const auto* item = m_listWidget->currentItem();
-    if (!item)
+    if (const auto* item = m_listWidget->currentItem(); !item)
         return;
-    auto ret = _template->loadTemplate(m_scene, item->text());
+
     accept();
 }
 

@@ -34,27 +34,10 @@ void ElementsDock::buildTree() const
     metrics->addChild(new QTreeWidgetItem({"Cadence"}));
     metrics->addChild(new QTreeWidgetItem({"Distance"}));
     metrics->addChild(new QTreeWidgetItem({"Elevation"}));
-
-    auto* graphics =
-        new QTreeWidgetItem({"Graphics"});
-
-    graphics->addChild(
-        new QTreeWidgetItem({"Text"}));
-
-    graphics->addChild(
-        new QTreeWidgetItem({"Image"}));
-
-    graphics->addChild(
-        new QTreeWidgetItem({"SVG"}));
-
-    graphics->addChild(
-        new QTreeWidgetItem({"Rectangle"}));
-
+    metrics->addChild(new QTreeWidgetItem({"Gradient"}));
     m_tree->addTopLevelItem(metrics);
-    m_tree->addTopLevelItem(graphics);
-
     metrics->setExpanded(true);
-    graphics->setExpanded(true);
+
 }
 
 void ElementsDock::onItemDoubleClicked( const QTreeWidgetItem* item, int) {

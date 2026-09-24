@@ -23,7 +23,6 @@ static const QHash<ElementType, ElementDefinition> elementDefinitions =
             true
         }
     },
-
     {
         ElementType::Distance,
         {
@@ -35,7 +34,6 @@ static const QHash<ElementType, ElementDefinition> elementDefinitions =
             .showUnits = true
         }
     },
-
     {
         ElementType::Gradient,
         {
@@ -45,7 +43,7 @@ static const QHash<ElementType, ElementDefinition> elementDefinitions =
             .showValue = true,
             .showUnits = true
             }
-        },
+    },
     {
         ElementType::HeartRate,
         {
@@ -54,21 +52,28 @@ static const QHash<ElementType, ElementDefinition> elementDefinitions =
             .showIcon = true,
             .showValue = true,
             .showUnits = true
-        },
+        }
     },
-
-{
-    ElementType::Elevation,
     {
-        .type = ElementType::Elevation,
-         .defaultUnits = "m",
-        .showIcon = true,
-        .showValue = true,
-        .showUnits = true
+        ElementType::Elevation,
+        {
+            .type = ElementType::Elevation,
+             .defaultUnits = "m",
+            .showIcon = true,
+            .showValue = true,
+            .showUnits = true
+        }
     },
+{
+        ElementType::Power,
+        {
+            .type = ElementType::Power,
+             .defaultUnits = "W",
+            .showIcon = true,
+            .showValue = true,
+            .showUnits = true
+        }
 
-    }
-
-
+    },
 };
 
