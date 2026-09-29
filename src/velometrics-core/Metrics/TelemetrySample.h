@@ -6,8 +6,6 @@
 
 class TelemetrySample
 {
-
-
     public:
 
     QDateTime timestamp;

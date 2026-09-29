@@ -15,7 +15,7 @@ void TcxLoader::calculateDerivedMetrics(TelemetryTrack& track) {
     track.samples[0].addValue(TelemetryValueName::Gradient,0.0,Unit::Percent,TelemetryValueType::Double);
 
     for (int i = 1; i < track.samples.count(); ++i){
-        TelemetrySample* previous  = &track.samples[i -1];
+        const TelemetrySample* previous  = &track.samples[i -1];
         TelemetrySample* current = &track.samples[i];
 
         const double previousDistance = previous->values.value(TelemetryValueName::Distance).value.toDouble();

@@ -47,8 +47,7 @@ enum class TelemetryValueType
 
 using TelemetryVariant =  QVariant;
 
-struct SampleValue
-{
+struct SampleValue {
     TelemetryValueName name;
     QVariant value;
     Unit unit;

@@ -15,6 +15,7 @@ public:
 
 private slots:
     void loadTcx();
+    void loadGpx();
 
 private:
     ActionManager* m_actionManager;
