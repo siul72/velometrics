@@ -101,6 +101,7 @@ bool CanvasTemplateManager::loadTemplate(CanvasScene* scene, const QString& name
     scene->clear();
     scene->setSceneRect(QRectF(QPointF(0, 0), canvasSize));
     scene->m_config.canvasBackgroundColor = canvasBackgroundColor;
+    scene->initHelpers();
 
     for (int i = 0; i < widgetCount; ++i){
         qint32 elementType;

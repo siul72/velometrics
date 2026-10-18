@@ -3,9 +3,11 @@
 #include <QApplication>
 #include <QGraphicsItem>
 #include <QDebug>
+
+#include "RenderCanvasScene.h"
 #include "../../velometrics-designer/Canvas/CanvasScene.h"
 #include "../VelometricsCore.h"
-
+#include <QPainter>
 
 VideoRenderService::VideoRenderService(QObject* parent): QObject(parent){
 }
@@ -21,23 +23,39 @@ bool VideoRenderService::render(CanvasScene* scene, const int startIndex, const 
         return false;
     }
 
-    if (!begin(outputFile, 3840, 2160, 25)){
-
-        return false;
-    }
-
     for (QGraphicsItem* item : scene->items()){
         item->setSelected(false);
     }
+
     scene->setHelpersVisible(false);
     scene->update();
+
+
+
+    auto render_scene = RenderCanvasScene();
+    render_scene.loadFrom(scene);
+
+    QRectF bounds =  render_scene.itemsBoundingRect();
+    bounds.adjust(-10, -10, 10, 10);
+
+    const auto w = bounds.width(); // 3840
+    const auto h = bounds.height(); //2160
+
+    //const int w = 3840;
+    //const int h = 2160;
+
+    if (!begin(outputFile, static_cast<int>(w), static_cast<int>(h), 25)){
+
+        return false;
+    }
 
     for (int index = startIndex; index <= endIndex;++index){
         VelometricsCore::instance().setPlaybackPosition(index);
         QApplication::processEvents();
         QApplication::sendPostedEvents();
 
-        const QImage frame = scene->renderFrame(QSize(m_width, m_height),Qt::black);
+
+        const QImage frame = render_scene.renderFrame(QSize(m_width, m_height),Qt::black);
 
         for (int i = 0; i < m_fps; ++i){
             if (!addFrame(frame)){
@@ -62,11 +80,9 @@ bool VideoRenderService::begin(const QString& outputFile, const int width, const
     m_fps = fps;
     m_pts = 0;
 
-    const AVCodec* codec =
-        avcodec_find_encoder(AV_CODEC_ID_H264);
+    const AVCodec* codec = avcodec_find_encoder(AV_CODEC_ID_H264);
 
-    if (!codec)
-    {
+    if (!codec) {
         qCritical() << "Unable to find H264 encoder";
         return false;
     }

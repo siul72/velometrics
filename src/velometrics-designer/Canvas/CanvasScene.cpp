@@ -18,10 +18,15 @@ CanvasScene::CanvasScene(QObject* parent): QGraphicsScene(parent){
     m_config = VelometricsSettings::instance();
     setSceneRect(0.0,0.0,m_config.canvasWidth,m_config.canvasHeight);
     setBackgroundBrush(m_config.canvasBackgroundColor);
-    //grid
+    initHelpers();
+}
+
+void CanvasScene::initHelpers() {
     m_border = addRect(sceneRect(), QPen(Qt::black, 2));
     QPen gridPen(QColor(225, 225, 225));
     gridPen.setWidth(1);
+    m_gridLines.clear();
+
     for (int x = 0; x <= m_config.canvasWidth; x += m_config.gridSize){
         m_gridLines.append(
             addLine(x, 0, x, m_config.canvasHeight, gridPen));
@@ -38,6 +43,11 @@ void CanvasScene::addElement(const ElementType element) {
     auto* widget = new TelemetryWidgetItem(def);
     widget->setPos(100, 100);
     addItem(widget);
+    m_widgets.append(widget);
+}
+
+QList<TelemetryWidgetItem*> CanvasScene::getTelemetryWidgets() const{
+    return m_widgets;
 }
 
 QImage CanvasScene::renderFrame( const QSize& outputSize, const QColor& background) {

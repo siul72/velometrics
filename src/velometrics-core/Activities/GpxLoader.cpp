@@ -4,6 +4,7 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QtMath>
+#include  <QQueue>
 #include "../Metrics/TelemetryTrack.h"
 
 namespace
@@ -121,6 +122,15 @@ bool GpxLoader::load(const QString& filename, TelemetryTrack& track)
     return true;
 }
 
+struct Sample
+{
+    double altitude;
+    double distance; // cumulative distance
+};
+
+static QQueue<Sample> history;
+static double currentGradient = 0.0;
+
 void GpxLoader::calculateDerivedMetrics(TelemetryTrack& track)
 {
     if (track.samples.count() < 2)
@@ -160,19 +170,26 @@ void GpxLoader::calculateDerivedMetrics(TelemetryTrack& track)
            Unit::KilometerPerHour,
            TelemetryValueType::Double);
 
-        const double altitudeDelta =
-            current->values.value(TelemetryValueName::Altitude).value.toDouble() -
-                previous->values.value(TelemetryValueName::Altitude).value.toDouble();
+        const auto current_altitude = current->values.value(TelemetryValueName::Altitude).value.toDouble();
+        history.push_back({current_altitude, totalDistance});
 
-        auto gradient = 0.0;
-        if (distance > 0.0){
-            gradient =
-                (altitudeDelta / distance) * 100.0;
+        while (history.size() >= 2 && totalDistance - history[1].distance >= 10.0) {
+            history.pop_front();
+        }
+
+        const double distanceDelta =
+            totalDistance - history.front().distance;
+
+        if (distanceDelta >= 1.0)
+        {
+            currentGradient =
+                ((current_altitude - history.front().altitude)
+                 / distanceDelta) * 100.0;
         }
 
         current->addValue(
           TelemetryValueName::Gradient,
-          gradient,
+          currentGradient,
           Unit::Percent,
           TelemetryValueType::Double);
     }
