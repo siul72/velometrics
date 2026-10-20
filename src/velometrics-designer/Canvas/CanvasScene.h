@@ -12,7 +12,9 @@ class CanvasScene : public QGraphicsScene
 public:
     explicit CanvasScene(QObject* parent = nullptr);
     void initHelpers();
-    void addElement(ElementType element);
+    void addTelemetryWidget(ElementType element);
+    void appendTelemetryWidget(TelemetryWidgetItem* widget);
+    void clearTelemetryWidgets();
     [[nodiscard]] QList<TelemetryWidgetItem*> getTelemetryWidgets() const;
     void setHelpersVisible(bool visible);
     VelometricsConfiguration m_config{};

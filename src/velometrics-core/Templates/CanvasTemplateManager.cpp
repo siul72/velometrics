@@ -102,7 +102,7 @@ bool CanvasTemplateManager::loadTemplate(CanvasScene* scene, const QString& name
     scene->setSceneRect(QRectF(QPointF(0, 0), canvasSize));
     scene->m_config.canvasBackgroundColor = canvasBackgroundColor;
     scene->initHelpers();
-
+    scene->clearTelemetryWidgets();
     for (int i = 0; i < widgetCount; ++i){
         qint32 elementType;
         stream >> elementType;
@@ -110,6 +110,7 @@ bool CanvasTemplateManager::loadTemplate(CanvasScene* scene, const QString& name
         auto* widget = new TelemetryWidgetItem(def);
         widget->deserialize(stream);
         scene->addItem(widget);
+        scene->appendTelemetryWidget(widget);
     }
     //scene->setHelpersVisible(true);
     return true;

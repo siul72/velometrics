@@ -38,13 +38,11 @@ bool VideoRenderService::render(CanvasScene* scene, const int startIndex, const 
     QRectF bounds =  render_scene.itemsBoundingRect();
     bounds.adjust(-10, -10, 10, 10);
 
-    const auto w = bounds.width(); // 3840
-    const auto h = bounds.height(); //2160
 
     //const int w = 3840;
     //const int h = 2160;
 
-    if (!begin(outputFile, static_cast<int>(w), static_cast<int>(h), 25)){
+    if (!begin(outputFile, bounds, 25)){
 
         return false;
     }
@@ -53,9 +51,7 @@ bool VideoRenderService::render(CanvasScene* scene, const int startIndex, const 
         VelometricsCore::instance().setPlaybackPosition(index);
         QApplication::processEvents();
         QApplication::sendPostedEvents();
-
-
-        const QImage frame = render_scene.renderFrame(QSize(m_width, m_height),Qt::black);
+        const QImage frame = render_scene.renderFrame(bounds, Qt::black);
 
         for (int i = 0; i < m_fps; ++i){
             if (!addFrame(frame)){
@@ -73,10 +69,11 @@ bool VideoRenderService::render(CanvasScene* scene, const int startIndex, const 
     return rc;
 }
 
-bool VideoRenderService::begin(const QString& outputFile, const int width, const int height, const int fps)
+bool VideoRenderService::begin(const QString& outputFile, const QRectF& bounds, const int fps)
 {
-    m_width = width;
-    m_height = height;
+    m_bounds = bounds;
+    m_width = static_cast<int>(bounds.width());
+    m_height = static_cast<int>(bounds.height());
     m_fps = fps;
     m_pts = 0;
 
@@ -121,8 +118,8 @@ bool VideoRenderService::begin(const QString& outputFile, const int width, const
     m_codecContext->codec_type = AVMEDIA_TYPE_VIDEO;
     m_codecContext->pix_fmt = AV_PIX_FMT_YUV420P;
 
-    m_codecContext->width = width;
-    m_codecContext->height = height;
+    m_codecContext->width = m_width;
+    m_codecContext->height = m_height;
 
     m_codecContext->time_base = AVRational{1, fps};
     m_codecContext->framerate = AVRational{fps, 1};
@@ -203,11 +200,11 @@ bool VideoRenderService::begin(const QString& outputFile, const int width, const
 
     m_swsContext =
         sws_getContext(
-            width,
-            height,
+            m_width,
+            m_height,
             AV_PIX_FMT_BGRA,
-            width,
-            height,
+            m_width,
+            m_height,
             AV_PIX_FMT_YUV420P,
             SWS_BICUBIC,
             nullptr,
@@ -272,7 +269,7 @@ bool VideoRenderService::end()
         return true;
     }
 
-    flushEncoder();
+    auto ret = flushEncoder();
 
     av_write_trailer(
         m_formatContext);

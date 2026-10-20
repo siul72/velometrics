@@ -37,13 +37,22 @@ void CanvasScene::initHelpers() {
     }
 }
 
-void CanvasScene::addElement(const ElementType element) {
+void CanvasScene::addTelemetryWidget(const ElementType element) {
     const auto def =  elementDefinitions.value(element);
     qDebug() << "Adding element: "<< elementTypeToString(element) << " units:" << def.defaultUnits;
     auto* widget = new TelemetryWidgetItem(def);
     widget->setPos(100, 100);
     addItem(widget);
     m_widgets.append(widget);
+}
+
+void CanvasScene::appendTelemetryWidget(TelemetryWidgetItem* widget){
+    m_widgets.append(widget);
+}
+
+void CanvasScene::clearTelemetryWidgets(){
+
+    m_widgets.clear();
 }
 
 QList<TelemetryWidgetItem*> CanvasScene::getTelemetryWidgets() const{

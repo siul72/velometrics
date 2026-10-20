@@ -18,8 +18,9 @@ void RenderCanvasScene::loadFrom(const CanvasScene* source){
 }
 
 
-QImage RenderCanvasScene::renderFrame( const QSize& outputSize, const QColor& background) {
-    QImage image(outputSize,QImage::Format_RGB32);
+QImage RenderCanvasScene::renderFrame(const QRectF& bounds, const QColor& background) {
+
+    QImage image(static_cast<int>(bounds.width()), static_cast<int>(bounds.height()),QImage::Format_RGB32);
     image.fill(background);
     QPainter painter(&image);
 
@@ -27,9 +28,7 @@ QImage RenderCanvasScene::renderFrame( const QSize& outputSize, const QColor& ba
     painter.setRenderHint(QPainter::TextAntialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-    render(&painter,
-        QRectF(QPointF(0, 0), outputSize),
-        sceneRect());
+    render(&painter, bounds, bounds);
 
     return image;
 }

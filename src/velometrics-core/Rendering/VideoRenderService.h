@@ -37,10 +37,8 @@ public:
 private:
     bool begin(
         const QString& outputFile,
-        int width,
-        int height,
-        int fps);
-    bool flushEncoder() const;
+        const QRectF& bounds,int fps);
+    [[nodiscard]] bool flushEncoder() const;
 
     bool addFrame(const QImage& image);
 
@@ -57,4 +55,5 @@ private:
     int m_width {};
     int m_height {};
     int m_fps {};
+    QRectF m_bounds {};
 };
